@@ -1,0 +1,1 @@
+# Konefeld.Kopiec.VodkaApp_Architecture
