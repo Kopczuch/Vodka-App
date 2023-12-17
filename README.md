@@ -1,2 +1,2 @@
-# Vodka App - Projekt Programowanie wizualne
+# Vodka App - Projekt Programowanie Wizualne
 UI - WPF
