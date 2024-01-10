@@ -2,9 +2,12 @@
 {
     public enum VodkaType
     {
-        Plain,
         Flavoured,
         Fruit,
-        Grain
+        Grain,
+        Potato,
+        Wheat,
+        Rye,
+        Corn
     }
 }

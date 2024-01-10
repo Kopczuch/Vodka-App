@@ -9,5 +9,8 @@ namespace Konefeld.Kopiec.VodkaApp.Interfaces
         IProducer Producer { get; set; }
         VodkaType Type { get; set; }
         double AlcoholPercentage { get; set; }
+        double VolumeInLiters { get; set; }
+        double Price { get; set; }
+        string? FlavourProfile { get; set; }
     }
 }

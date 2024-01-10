@@ -15,9 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.Interfaces", "Konefeld.Kopiec.VodkaApp.Interfaces\Konefeld.Kopiec.VodkaApp.Interfaces.csproj", "{00467242-A4C0-46B4-A875-01302B476EC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Konefeld.Kopiec.VodkaApp.UI", "Konefeld.Kopiec.VodkaApp.UI\Konefeld.Kopiec.VodkaApp.UI.csproj", "{7168B73B-BFCF-48E4-B4F2-88D117DFC3A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.UI", "Konefeld.Kopiec.VodkaApp.UI\Konefeld.Kopiec.VodkaApp.UI.csproj", "{7168B73B-BFCF-48E4-B4F2-88D117DFC3A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Konefeld.Kopiec.VodkaApp.ViewModel", "Konefeld.Kopiec.VodkaApp.ViewModel\Konefeld.Kopiec.VodkaApp.ViewModel.csproj", "{6E48A8AB-6EDE-447D-81E5-1979D90E090D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.ViewModel", "Konefeld.Kopiec.VodkaApp.ViewModel\Konefeld.Kopiec.VodkaApp.ViewModel.csproj", "{6E48A8AB-6EDE-447D-81E5-1979D90E090D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Konefeld.Kopiec.VodkaApp.DaoSqlServer", "Konefeld.Kopiec.VodkaApp.DaoSqlServer\Konefeld.Kopiec.VodkaApp.DaoSqlServer.csproj", "{B64D1595-F75B-4574-A35E-E7896FEA332D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{6E48A8AB-6EDE-447D-81E5-1979D90E090D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E48A8AB-6EDE-447D-81E5-1979D90E090D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E48A8AB-6EDE-447D-81E5-1979D90E090D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B64D1595-F75B-4574-A35E-E7896FEA332D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B64D1595-F75B-4574-A35E-E7896FEA332D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B64D1595-F75B-4574-A35E-E7896FEA332D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B64D1595-F75B-4574-A35E-E7896FEA332D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

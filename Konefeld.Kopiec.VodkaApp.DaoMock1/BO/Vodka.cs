@@ -10,5 +10,8 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1.BO
         public IProducer Producer { get; set; }
         public VodkaType Type { get; set; }
         public double AlcoholPercentage { get; set; }
+        public double VolumeInLiters { get; set; }
+        public double Price { get; set; }
+        public string? FlavourProfile { get; set; }
     }
 }
