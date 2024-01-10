@@ -1,1 +1,2 @@
-# Konefeld.Kopiec.VodkaApp_Architecture
+# Vodka App - Projekt Programowanie Wizualne
+UI - WPF
