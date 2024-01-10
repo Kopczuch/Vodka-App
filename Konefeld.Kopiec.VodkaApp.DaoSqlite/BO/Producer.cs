@@ -1,7 +1,7 @@
 ﻿using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 
-namespace Konefeld.Kopiec.VodkaApp.DaoSqlServer.BO
+namespace Konefeld.Kopiec.VodkaApp.DaoSqlite.BO
 {
     public class Producer : IProducer
     {

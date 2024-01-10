@@ -1,8 +1,7 @@
-﻿using Konefeld.Kopiec.VodkaApp.DaoSqlServer.BO;
-using Konefeld.Kopiec.VodkaApp.Interfaces;
+﻿using Konefeld.Kopiec.VodkaApp.DaoSqlite.BO;
 using Microsoft.EntityFrameworkCore;
 
-namespace Konefeld.Kopiec.VodkaApp.DaoSqlServer
+namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
 {
     public class VodkaAppDbContext : DbContext
     {
@@ -13,6 +12,11 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlServer
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data source=..\\Database\\DaoSqlite.db");
+        }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Vodka>()

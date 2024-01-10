@@ -1,5 +1,5 @@
 ﻿using Konefeld.Kopiec.VodkaApp.Core;
-using Konefeld.Kopiec.VodkaApp.DaoMock1.BO;
+using Konefeld.Kopiec.VodkaApp.DaoMock2.BO;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 
 namespace Konefeld.Kopiec.VodkaApp.DaoMock2

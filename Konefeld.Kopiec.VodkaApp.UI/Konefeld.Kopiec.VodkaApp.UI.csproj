@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp.Blc\Konefeld.Kopiec.VodkaApp.Blc.csproj" />
+    <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp.DaoMock1\Konefeld.Kopiec.VodkaApp.DaoMock1.csproj" />
+    <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp.DaoMock2\Konefeld.Kopiec.VodkaApp.DaoMock2.csproj" />
     <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp.ViewModel\Konefeld.Kopiec.VodkaApp.ViewModel.csproj" />
   </ItemGroup>
 
