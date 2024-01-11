@@ -27,6 +27,9 @@ namespace Konefeld.Kopiec.VodkaApp.Core
 
     public static class ProducerExportStatusExtensions
     {
+        /// <summary>
+        /// Podmienia wartość enuma na stringa ze spacjami
+        /// </summary>
         public static string ToPrettyString(this ProducerExportStatus status)
         {
             var type = status.GetType();
