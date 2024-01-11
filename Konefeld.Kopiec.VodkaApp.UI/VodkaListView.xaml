@@ -14,7 +14,10 @@
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="150"/>
                     <GridViewColumn Header="Producer" DisplayMemberBinding="{Binding ProducerName}" Width="150"/>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="80"/>
-                    <GridViewColumn Header="Alcohol Percentage" DisplayMemberBinding="{Binding AlcoholPercentage}" Width="120"/>
+                    <GridViewColumn Header="Alcohol Percentage" DisplayMemberBinding="{Binding AlcoholPercentage}" Width="50"/>
+                    <GridViewColumn Header="Volume (liters)" DisplayMemberBinding="{Binding VolumeInLiters}" Width="50"/>
+                    <GridViewColumn Header="Price (zł)" DisplayMemberBinding="{Binding Price}" Width="50"/>
+                    <GridViewColumn Header="Flavour Profile" DisplayMemberBinding="{Binding FlavourProfile}" Width="50"/>
                 </GridView>
             </ListView.View>
         </ListView>

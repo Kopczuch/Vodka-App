@@ -8,19 +8,15 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
         public DbSet<Producer> Producers { get; set; }
         public DbSet<Vodka> Vodkas { get; set; }
 
-        public VodkaAppDbContext(DbContextOptions<VodkaAppDbContext> options) : base(options)
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data source=..\\Database\\DaoSqlite.db");
+            optionsBuilder.UseSqlite("Data source=Database\\DaoSqlite.db");
         }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Vodka>()
-                .HasOne(v => v.Producer)
+                .HasOne(v => v.ProducerImpl)
                 .WithMany()
                 .HasForeignKey(v => v.ProducerId);
         }

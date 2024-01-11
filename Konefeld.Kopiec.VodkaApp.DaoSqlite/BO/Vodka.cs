@@ -1,4 +1,5 @@
-﻿using Konefeld.Kopiec.VodkaApp.Core;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 
 namespace Konefeld.Kopiec.VodkaApp.DaoSqlite.BO
@@ -15,7 +16,19 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite.BO
 
 
         public int ProducerId { get; set; }
-        public IProducer Producer { get; set; }
+
+        [NotMapped]
+        public IProducer Producer
+        {
+            get => ProducerImpl;
+            set
+            {
+                ProducerImpl = (Producer)value;
+                ProducerId = ProducerImpl.Id;
+            }
+        }
+
+        public Producer ProducerImpl { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -50,10 +51,27 @@ namespace Konefeld.Kopiec.VodkaApp.Blc
             }
         }
 
-        public IVodka CreateVodka() => Dao.CreateVodka();
-        public IEnumerable<IVodka> GetVodkas() => Dao.GetAllVodkas();
 
-        public IProducer CreateProducer() => Dao.CreateProducer();
+        // Create
+        public int CreateVodka(string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
+            double volumeInLiters, double price, string? flavourProfile) => Dao.CreateVodka(name, producerId,
+            vodkaType, alcoholPercentage, volumeInLiters, price,
+            flavourProfile);
+
+        public int CreateProducer(string name, string description, string address, string countryOfOrigin,
+            int establishmentYear, ProducerExportStatus producerExportStatus) => Dao.CreateProducer(name, description,
+            address, countryOfOrigin, establishmentYear, producerExportStatus);
+        
+        // Read
+        public IEnumerable<IVodka> GetVodkas() => Dao.GetAllVodkas();
         public IEnumerable<IProducer> GetProducers() => Dao.GetAllProducers();
+
+        // Update
+        public bool UpdateVodka(int id, string vodkaSnapshot) => Dao.UpdateVodka(id, vodkaSnapshot); // todo: do przemyślenia xd
+        public bool UpdateProducer(int id, string producerSnapshot) => Dao.UpdateProducer(id, producerSnapshot);
+
+        // Delete
+        public bool DeleteVodka(int id) => Dao.DeleteVodka(id);
+        public bool DeleteProducer(int id) => Dao.DeleteProducer(id);
     }
 }
