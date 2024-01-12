@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls;
 using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
+using Konefeld.Kopiec.VodkaApp.UI.Dto;
 using Konefeld.Kopiec.VodkaApp.ViewModel;
 
 namespace Konefeld.Kopiec.VodkaApp.UI
@@ -39,14 +40,19 @@ namespace Konefeld.Kopiec.VodkaApp.UI
         public int CreateProducer(string name, string description, string address, string countryOfOrigin,
             int establishmentYear, ProducerExportStatus producerExportStatus)
         {
-            return _blc.CreateProducer(name, description,
+            var newProducer = new ProducerDto(name, description,
                 address, countryOfOrigin, establishmentYear, producerExportStatus);
+
+            return _blc.CreateProducer(newProducer);
         }
 
-        // producerSnapshot to na razie koncepcja tylko będzie zmieniane
-        public bool UpdateProducer(int id, string producerSnapshot)
+        public bool UpdateProducer(int id, string name, string description, string address, string countryOfOrigin,
+            int establishmentYear, ProducerExportStatus producerExportStatus)
         {
-            return _blc.UpdateProducer(id, producerSnapshot);
+            var updatedProducer = new ProducerDto(name, description,
+                address, countryOfOrigin, establishmentYear, producerExportStatus);
+
+            return _blc.UpdateProducer(id, updatedProducer);
         }
 
         public bool DeleteProducer(int id)

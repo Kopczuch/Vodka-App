@@ -26,40 +26,19 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
         }
 
         // Create
-        public int CreateVodka(string name, int producerId, VodkaType vodkaType, double alcoholPercentage, double volumeInLiters,
-            double price, string? flavourProfile)
+        public int CreateVodka(IVodkaDto vodka)
         {
-            var newVodka = new Vodka
-            {
-                Id = GetLatestVodkaId(),
-                Name = name,
-                Producer = GetProducer(producerId),
-                Type = vodkaType,
-                AlcoholPercentage = alcoholPercentage,
-                VolumeInLiters = volumeInLiters,
-                Price = price,
-                FlavourProfile = flavourProfile
-            };
-
+            var newVodka = MapVodkaDto(vodka);
             _vodkas.Add(newVodka);
+
             return newVodka.Id;
         }
 
-        public int CreateProducer(string name, string description, string address, string countryOfOrigin, int establishmentYear,
-            ProducerExportStatus producerExportStatus)
+        public int CreateProducer(IProducerDto producer)
         {
-            var newProducer = new Producer
-            {
-                Id = GetLatestProducerId(),
-                Name = name,
-                Description = description,
-                Address = address,
-                CountryOfOrigin = countryOfOrigin,
-                EstablishmentYear = establishmentYear,
-                ExportStatus = producerExportStatus
-            };
-
+            var newProducer = MapProducerDto(producer);
             _producers.Add(newProducer);
+
             return newProducer.Id;
         }
 
@@ -75,24 +54,26 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
         }
 
         // Update
-        public bool UpdateVodka(int id, string vodkaSnapshot)
+        public bool UpdateVodka(int id, IVodkaDto vodka)
         {
             var updatedVodka = _vodkas.FirstOrDefault(v => v.Id == id);
 
             if (updatedVodka == null)
                 return false;
 
-            updatedVodka.Name += "New"; // todo: do zmiany
+            UpdateVodka(updatedVodka, vodka);
+
             return true;
         }
-        public bool UpdateProducer(int id, string producerSnapshot)
+        public bool UpdateProducer(int id, IProducerDto producer)
         {
             var updatedProducer = _producers.FirstOrDefault(p => p.Id == id);
 
             if (updatedProducer == null)
                 return false;
 
-            updatedProducer.Name += "New"; // todo: do zmiany
+            UpdateProducer(updatedProducer, producer);
+
             return true;
         }
 
@@ -119,6 +100,21 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
             return true;
         }
 
+        private Vodka MapVodkaDto(IVodkaDto vodka)
+        {
+            return new Vodka
+            {
+                Id = GetLatestVodkaId(),
+                Name = vodka.Name,
+                Producer = GetProducer(vodka.ProducerId),
+                Type = vodka.Type,
+                AlcoholPercentage = vodka.AlcoholPercentage,
+                VolumeInLiters = vodka.VolumeInLiters,
+                Price = vodka.Price,
+                FlavourProfile = vodka.FlavourProfile
+            };
+        }
+
         private IProducer GetProducer(int id)
         {
             var producer = _producers.FirstOrDefault(p => p.Id == id);
@@ -135,6 +131,20 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
             return latestVodka?.Id + 1 ?? 1;
         }
 
+        private Producer MapProducerDto(IProducerDto producer)
+        {
+            return new Producer
+            {
+                Id = GetLatestProducerId(),
+                Name = producer.Name,
+                Description = producer.Description,
+                Address = producer.Address,
+                CountryOfOrigin = producer.CountryOfOrigin,
+                EstablishmentYear = producer.EstablishmentYear,
+                ExportStatus = producer.ExportStatus
+            };
+        }
+
         private int GetLatestProducerId()
         {
             if (_producers.Count == 0)
@@ -142,6 +152,27 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
 
             var latestProducer = _producers.MaxBy(v => v.Id);
             return latestProducer?.Id + 1 ?? 1;
+        }
+
+        private void UpdateVodka(IVodka vodka, IVodkaDto vodkaDto)
+        {
+            vodka.Name = vodkaDto.Name;
+            vodka.Producer = GetProducer(vodkaDto.ProducerId);
+            vodka.Type = vodkaDto.Type;
+            vodka.AlcoholPercentage = vodkaDto.AlcoholPercentage;
+            vodka.VolumeInLiters = vodkaDto.VolumeInLiters;
+            vodka.Price = vodkaDto.Price;
+            vodka.FlavourProfile = vodkaDto.FlavourProfile;
+        }
+
+        private void UpdateProducer(IProducer producer, IProducerDto producerDto)
+        {
+            producer.Name = producerDto.Name;
+            producer.Description = producerDto.Description;
+            producer.Address = producerDto.Address;
+            producer.CountryOfOrigin = producerDto.CountryOfOrigin;
+            producer.EstablishmentYear = producerDto.EstablishmentYear;
+            producer.ExportStatus = producerDto.ExportStatus;
         }
     }
 }

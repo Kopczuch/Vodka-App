@@ -1,5 +1,4 @@
-﻿using Konefeld.Kopiec.VodkaApp.Core;
-using Konefeld.Kopiec.VodkaApp.DaoSqlite.BO;
+﻿using Konefeld.Kopiec.VodkaApp.DaoSqlite.BO;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,19 +14,9 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
         }
 
         // Create
-        public int CreateVodka(string name, int producerId, VodkaType vodkaType, double alcoholPercentage, double volumeInLiters,
-            double price, string? flavourProfile)
+        public int CreateVodka(IVodkaDto vodka)
         {
-            var newVodka = new Vodka
-            {
-                Name = name,
-                Producer = GetProducer(producerId),
-                Type = vodkaType,
-                AlcoholPercentage = alcoholPercentage,
-                VolumeInLiters = volumeInLiters,
-                Price = price,
-                FlavourProfile = flavourProfile
-            };
+            var newVodka = MapVodkaDto(vodka);
 
             _context.Vodkas.Add(newVodka);
             _context.SaveChanges();
@@ -35,18 +24,9 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
             return newVodka.Id;
         }
 
-        public int CreateProducer(string name, string description, string address, string countryOfOrigin, int establishmentYear,
-            ProducerExportStatus producerExportStatus)
+        public int CreateProducer(IProducerDto producer)
         {
-            var newProducer = new Producer
-            {
-                Name = name,
-                Description = description,
-                Address = address,
-                CountryOfOrigin = countryOfOrigin,
-                EstablishmentYear = establishmentYear,
-                ExportStatus = producerExportStatus
-            };
+            var newProducer = MapProducerDto(producer);
 
             _context.Producers.Add(newProducer);
             _context.SaveChanges();
@@ -78,26 +58,28 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
         }
 
         // Update
-        public bool UpdateVodka(int id, string vodkaSnapshot)
+        public bool UpdateVodka(int id, IVodkaDto vodka)
         {
             var updatedVodka = _context.Vodkas.FirstOrDefault(v => v.Id == id);
 
             if (updatedVodka == null)
                 return false;
 
-            updatedVodka.Name += "New"; // todo: do zmiany
+            UpdateVodka(updatedVodka, vodka);
+
             _context.SaveChanges();
             return true;
         }
 
-        public bool UpdateProducer(int id, string producerSnapshot)
+        public bool UpdateProducer(int id, IProducerDto producer)
         {
             var updatedProducer = _context.Producers.FirstOrDefault(p => p.Id == id);
 
             if (updatedProducer == null)
                 return false;
 
-            updatedProducer.Name += "New"; // todo: do zmiany
+            UpdateProducer(updatedProducer, producer);
+
             _context.SaveChanges();
             return true;
         }
@@ -129,12 +111,60 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
             return true;
         }
 
+        // Mappings
+        private Vodka MapVodkaDto(IVodkaDto vodka)
+        {
+            return new Vodka
+            {
+                Name = vodka.Name,
+                Producer = GetProducer(vodka.ProducerId),
+                Type = vodka.Type,
+                AlcoholPercentage = vodka.AlcoholPercentage,
+                VolumeInLiters = vodka.VolumeInLiters,
+                Price = vodka.Price,
+                FlavourProfile = vodka.FlavourProfile
+            };
+        }
 
         private IProducer GetProducer(int id)
         {
             var producer = _context.Producers.FirstOrDefault(p => p.Id == id);
 
             return producer ?? throw new NullReferenceException("Producer with given ID does not exist.");
+        }
+
+        private Producer MapProducerDto(IProducerDto producer)
+        {
+            return new Producer
+            {
+                Name = producer.Name,
+                Description = producer.Description,
+                Address = producer.Address,
+                CountryOfOrigin = producer.CountryOfOrigin,
+                EstablishmentYear = producer.EstablishmentYear,
+                ExportStatus = producer.ExportStatus
+            };
+        }
+
+        private void UpdateVodka(IVodka vodka, IVodkaDto vodkaDto)
+        {
+            vodka.Name = vodkaDto.Name;
+            vodka.Producer = GetProducer(vodkaDto.ProducerId);
+            vodka.Type = vodkaDto.Type;
+            vodka.AlcoholPercentage = vodkaDto.AlcoholPercentage;
+            vodka.VolumeInLiters = vodkaDto.VolumeInLiters;
+            vodka.Price = vodkaDto.Price;
+            vodka.FlavourProfile = vodkaDto.FlavourProfile;
+        }
+
+        private void UpdateProducer(IProducer producer, IProducerDto producerDto)
+        {
+            producer.Name = producerDto.Name;
+            producer.Description = producerDto.Description;
+            producer.Address = producerDto.Address;
+            producer.CountryOfOrigin = producerDto.CountryOfOrigin;
+            producer.EstablishmentYear = producerDto.EstablishmentYear;
+            producer.ExportStatus = producerDto.ExportStatus;
         }
     }
 }

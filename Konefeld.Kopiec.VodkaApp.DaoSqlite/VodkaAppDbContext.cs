@@ -10,9 +10,12 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data source=Database\\DaoSqlite.db");
+            optionsBuilder.UseSqlite("Data source=..\\..\\..\\..\\Konefeld.Kopiec.VodkaApp.DaoSqlite\\bin\\Debug\\net7.0\\Database\\DaoSqlite.db");
+            //Data source=..\\..\\..\\..\\Konefeld.Kopiec.VodkaApp.DaoSqlite\\bin\\Debug\\net7.0\\Database\DaoSqlite.db
+            //Data source=Database\\DaoSqlite.db
+
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Vodka>()

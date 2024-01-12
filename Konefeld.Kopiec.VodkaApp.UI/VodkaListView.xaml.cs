@@ -2,6 +2,7 @@
 using Konefeld.Kopiec.VodkaApp.ViewModel;
 using System.Windows.Controls;
 using Konefeld.Kopiec.VodkaApp.Core;
+using Konefeld.Kopiec.VodkaApp.UI.Dto;
 
 namespace Konefeld.Kopiec.VodkaApp.UI
 {
@@ -38,13 +39,19 @@ namespace Konefeld.Kopiec.VodkaApp.UI
         public int CreateVodka(string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
             double volumeInLiters, double price, string? flavourProfile)
         {
-            return _blc.CreateVodka(name, producerId, vodkaType, alcoholPercentage, volumeInLiters, price, flavourProfile);
+            var newVodka = new VodkaDto(name, producerId, vodkaType, alcoholPercentage, volumeInLiters, price,
+                flavourProfile);
+
+            return _blc.CreateVodka(newVodka);
         }
 
-        // vodkaSnapshot to na razie koncepcja tylko będzie zmieniane
-        public bool UpdateVodka(int id, string vodkaSnapshot)
+        public bool UpdateVodka(int id, string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
+            double volumeInLiters, double price, string? flavourProfile)
         {
-            return _blc.UpdateVodka(id, vodkaSnapshot);
+            var updatedVodka = new VodkaDto(name, producerId, vodkaType, alcoholPercentage, volumeInLiters, price,
+                flavourProfile);
+
+            return _blc.UpdateVodka(id, updatedVodka);
         }
 
         public bool DeleteVodka(int id)
