@@ -1,0 +1,36 @@
+﻿@using Konefeld.Kopiec.VodkaApp.Blc
+@using Konefeld.Kopiec.VodkaApp.Interfaces
+@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+@if (vodkas != null)
+{
+    <ul>
+        @foreach (var vodka in vodkas)
+        {
+            <li>
+                <strong>Name:</strong> @vodka.Name <br/>
+                <strong>Producer:</strong> @vodka.Producer.Name
+            </li>
+        }
+    </ul>
+}
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+    private Blc _blc;
+    IList<IVodka> vodkas;
+
+    protected override void OnInitialized()
+    {
+        _blc = Blc.Instance;
+
+        vodkas = _blc.GetVodkas().ToList();
+    }
+}

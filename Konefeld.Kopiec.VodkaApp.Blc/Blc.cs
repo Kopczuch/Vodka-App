@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Microsoft.Extensions.Configuration;
 
