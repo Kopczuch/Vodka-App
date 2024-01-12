@@ -2,7 +2,7 @@
 using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Konefeld.Kopiec.VodkaApp.UI.Dto;
-using Konefeld.Kopiec.VodkaApp.ViewModel;
+using Konefeld.Kopiec.VodkaApp.UI.ViewModels;
 
 namespace Konefeld.Kopiec.VodkaApp.UI
 {
@@ -30,27 +30,26 @@ namespace Konefeld.Kopiec.VodkaApp.UI
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                Address = p.Address,
                 CountryOfOrigin = p.CountryOfOrigin,
                 EstablishmentYear = p.EstablishmentYear,
                 ExportStatus = p.ExportStatus.ToPrettyString()
             });
         }
 
-        public int CreateProducer(string name, string description, string address, string countryOfOrigin,
+        public int CreateProducer(string name, string description, string countryOfOrigin,
             int establishmentYear, ProducerExportStatus producerExportStatus)
         {
-            var newProducer = new ProducerDto(name, description,
-                address, countryOfOrigin, establishmentYear, producerExportStatus);
+            var newProducer =
+                new ProducerDto(name, description, countryOfOrigin, establishmentYear, producerExportStatus);
 
             return _blc.CreateProducer(newProducer);
         }
 
-        public bool UpdateProducer(int id, string name, string description, string address, string countryOfOrigin,
+        public bool UpdateProducer(int id, string name, string description, string countryOfOrigin,
             int establishmentYear, ProducerExportStatus producerExportStatus)
         {
             var updatedProducer = new ProducerDto(name, description,
-                address, countryOfOrigin, establishmentYear, producerExportStatus);
+                countryOfOrigin, establishmentYear, producerExportStatus);
 
             return _blc.UpdateProducer(id, updatedProducer);
         }

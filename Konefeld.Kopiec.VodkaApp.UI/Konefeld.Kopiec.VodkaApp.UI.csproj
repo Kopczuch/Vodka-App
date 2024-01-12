@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp.Blc\Konefeld.Kopiec.VodkaApp.Blc.csproj" />
-    <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp.ViewModel\Konefeld.Kopiec.VodkaApp.ViewModel.csproj" />
     <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp\Konefeld.Kopiec.VodkaApp.csproj" />
   </ItemGroup>
 

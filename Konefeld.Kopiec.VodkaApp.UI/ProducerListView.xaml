@@ -13,7 +13,6 @@
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" Width="50"/>
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="130"/>
                     <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="150"/>
-                    <GridViewColumn Header="Address" DisplayMemberBinding="{Binding Description}" Width="150"/>
                     <GridViewColumn Header="Country of origin" DisplayMemberBinding="{Binding CountryOfOrigin}" Width="150"/>
                     <GridViewColumn Header="Establishment year" DisplayMemberBinding="{Binding EstablishmentYear}" Width="150"/>
                     <GridViewColumn Header="Export status" DisplayMemberBinding="{Binding ExportStatus}" Width="150"/>

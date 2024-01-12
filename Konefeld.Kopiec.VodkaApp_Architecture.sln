@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.UI", "Konefeld.Kopiec.VodkaApp.UI\Konefeld.Kopiec.VodkaApp.UI.csproj", "{7168B73B-BFCF-48E4-B4F2-88D117DFC3A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.ViewModel", "Konefeld.Kopiec.VodkaApp.ViewModel\Konefeld.Kopiec.VodkaApp.ViewModel.csproj", "{6E48A8AB-6EDE-447D-81E5-1979D90E090D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.DaoSqlite", "Konefeld.Kopiec.VodkaApp.DaoSqlite\Konefeld.Kopiec.VodkaApp.DaoSqlite.csproj", "{4F7D113C-1A33-4F3B-A132-B28F0A1B501B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Konefeld.Kopiec.VodkaApp.UI.WEB", "Konefeld.Kopiec.VodkaApp.UI.WEB\Konefeld.Kopiec.VodkaApp.UI.WEB.csproj", "{8392895E-6D67-4EE8-8D6F-4D6743229CA7}"
@@ -51,10 +49,6 @@ Global
 		{7168B73B-BFCF-48E4-B4F2-88D117DFC3A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7168B73B-BFCF-48E4-B4F2-88D117DFC3A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7168B73B-BFCF-48E4-B4F2-88D117DFC3A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E48A8AB-6EDE-447D-81E5-1979D90E090D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E48A8AB-6EDE-447D-81E5-1979D90E090D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E48A8AB-6EDE-447D-81E5-1979D90E090D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E48A8AB-6EDE-447D-81E5-1979D90E090D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F7D113C-1A33-4F3B-A132-B28F0A1B501B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F7D113C-1A33-4F3B-A132-B28F0A1B501B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F7D113C-1A33-4F3B-A132-B28F0A1B501B}.Release|Any CPU.ActiveCfg = Release|Any CPU

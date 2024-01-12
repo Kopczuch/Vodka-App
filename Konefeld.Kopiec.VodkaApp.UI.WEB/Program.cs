@@ -1,4 +1,5 @@
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Data;
+using Konefeld.Kopiec.VodkaApp.UI.WEB.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -13,7 +14,8 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
-            builder.Services.AddSingleton<WeatherForecastService>();
+            builder.Services.AddSingleton<VodkaService>();
+            builder.Services.AddSingleton<ProducerService>();
 
             var app = builder.Build();
 

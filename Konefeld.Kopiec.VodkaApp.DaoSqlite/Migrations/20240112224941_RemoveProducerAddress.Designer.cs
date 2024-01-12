@@ -2,6 +2,7 @@
 using Konefeld.Kopiec.VodkaApp.DaoSqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Konefeld.Kopiec.VodkaApp.DaoSqlite.Migrations
 {
     [DbContext(typeof(VodkaAppDbContext))]
-    partial class VodkaAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240112224941_RemoveProducerAddress")]
+    partial class RemoveProducerAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.15");

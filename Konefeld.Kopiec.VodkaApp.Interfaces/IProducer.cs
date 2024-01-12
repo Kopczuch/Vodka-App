@@ -7,7 +7,6 @@ namespace Konefeld.Kopiec.VodkaApp.Interfaces
         int Id { get; set; }
         string Name { get; set; }
         string Description { get; set; }
-        string Address { get; set; }
         string CountryOfOrigin { get; set; }
         int EstablishmentYear { get; set; }
         ProducerExportStatus ExportStatus { get; set; }

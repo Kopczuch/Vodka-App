@@ -138,7 +138,6 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
                 Id = GetLatestProducerId(),
                 Name = producer.Name,
                 Description = producer.Description,
-                Address = producer.Address,
                 CountryOfOrigin = producer.CountryOfOrigin,
                 EstablishmentYear = producer.EstablishmentYear,
                 ExportStatus = producer.ExportStatus
@@ -169,7 +168,6 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
         {
             producer.Name = producerDto.Name;
             producer.Description = producerDto.Description;
-            producer.Address = producerDto.Address;
             producer.CountryOfOrigin = producerDto.CountryOfOrigin;
             producer.EstablishmentYear = producerDto.EstablishmentYear;
             producer.ExportStatus = producerDto.ExportStatus;

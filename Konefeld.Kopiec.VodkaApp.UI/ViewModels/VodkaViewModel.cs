@@ -1,6 +1,4 @@
-﻿using Konefeld.Kopiec.VodkaApp.Interfaces;
-
-namespace Konefeld.Kopiec.VodkaApp.ViewModel
+﻿namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
 {
     public class VodkaViewModel
     {
@@ -12,6 +10,5 @@ namespace Konefeld.Kopiec.VodkaApp.ViewModel
         public double VolumeInLiters { get; set; }
         public double Price { get; set; }
         public string? FlavourProfile { get; set; }
-        
     }
 }

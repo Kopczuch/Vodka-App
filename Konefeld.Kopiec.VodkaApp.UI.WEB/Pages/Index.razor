@@ -1,19 +1,20 @@
-﻿@using Konefeld.Kopiec.VodkaApp.Blc
-@using Konefeld.Kopiec.VodkaApp.Interfaces
+﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels
+@inject VodkaService VodkaService
 @page "/"
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
 
-@if (vodkas != null)
+@if (_vodkas.Count != 0)
 {
     <ul>
-        @foreach (var vodka in vodkas)
+        @foreach (var vodka in _vodkas)
         {
             <li>
                 <strong>Name:</strong> @vodka.Name <br/>
-                <strong>Producer:</strong> @vodka.Producer.Name
+                <strong>Producer:</strong> @vodka.ProducerName
             </li>
         }
     </ul>
@@ -24,13 +25,10 @@ Welcome to your new app.
 <SurveyPrompt Title="How is Blazor working for you?" />
 
 @code {
-    private Blc _blc;
-    IList<IVodka> vodkas;
+    private IList<VodkaViewModel> _vodkas = new List<VodkaViewModel>();
 
     protected override void OnInitialized()
     {
-        _blc = Blc.Instance;
-
-        vodkas = _blc.GetVodkas().ToList();
+        _vodkas = VodkaService.GetVodkas();
     }
 }

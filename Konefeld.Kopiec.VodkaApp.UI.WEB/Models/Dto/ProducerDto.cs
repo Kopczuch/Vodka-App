@@ -1,7 +1,7 @@
 ﻿using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 
-namespace Konefeld.Kopiec.VodkaApp.UI.Dto
+namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 {
     public class ProducerDto : IProducerDto
     {

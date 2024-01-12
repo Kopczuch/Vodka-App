@@ -1,28 +1,31 @@
-﻿using Konefeld.Kopiec.VodkaApp.Interfaces;
-using System.Windows.Controls;
-using Konefeld.Kopiec.VodkaApp.Core;
-using Konefeld.Kopiec.VodkaApp.UI.Dto;
-using Konefeld.Kopiec.VodkaApp.UI.ViewModels;
+﻿using Konefeld.Kopiec.VodkaApp.Core;
+using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto;
+using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels;
 
-namespace Konefeld.Kopiec.VodkaApp.UI
+namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
 {
-    /// <summary>
-    /// Interaction logic for VodkaListView.xaml
-    /// </summary>
-    public partial class VodkaListView : UserControl
+    public class VodkaService
     {
         private readonly Blc.Blc _blc;
-        public VodkaListView()
+
+        public VodkaService()
         {
-            InitializeComponent();
-
             _blc = Blc.Blc.Instance;
-
-            LvVodkas.ItemsSource = MapToViewModel(_blc.GetVodkas());
         }
 
-        private IEnumerable<VodkaViewModel> MapToViewModel(IEnumerable<IVodka> vodkas)
+        public int CreateVodka(string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
+            double volumeInLiters, double price, string? flavourProfile)
         {
+            var newVodka = new VodkaDto(name, producerId, vodkaType, alcoholPercentage, volumeInLiters, price,
+                flavourProfile);
+
+            return _blc.CreateVodka(newVodka);
+        }
+
+        public IList<VodkaViewModel> GetVodkas()
+        {
+            var vodkas = _blc.GetVodkas().ToList();
+
             return vodkas.Select(v => new VodkaViewModel
             {
                 Id = v.Id,
@@ -33,16 +36,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI
                 VolumeInLiters = v.VolumeInLiters,
                 Price = v.Price,
                 FlavourProfile = v.FlavourProfile
-            });
-        }
-
-        public int CreateVodka(string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
-            double volumeInLiters, double price, string? flavourProfile)
-        {
-            var newVodka = new VodkaDto(name, producerId, vodkaType, alcoholPercentage, volumeInLiters, price,
-                flavourProfile);
-
-            return _blc.CreateVodka(newVodka);
+            }).ToList();
         }
 
         public bool UpdateVodka(int id, string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
@@ -58,5 +52,6 @@ namespace Konefeld.Kopiec.VodkaApp.UI
         {
             return _blc.DeleteVodka(id);
         }
+
     }
 }

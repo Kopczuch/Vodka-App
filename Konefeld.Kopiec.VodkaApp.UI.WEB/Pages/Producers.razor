@@ -1,0 +1,49 @@
+﻿@page "/producers"
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
+@inject ProducerService ProducerService
+
+
+<PageTitle>Producers</PageTitle>
+
+<h1>Producers</h1>
+
+@if (_producers.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Country of origin</th>
+                <th>Establishment year</th>
+                <th>Export status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producer in _producers)
+            {
+                <tr>
+                    <td>@producer.Name</td>
+                    <td>@producer.Description</td>
+                    <td>@producer.CountryOfOrigin</td>
+                    <td>@producer.EstablishmentYear</td>
+                    <td>@producer.ExportStatus</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IList<ProducerViewModel> _producers = new List<ProducerViewModel>();
+
+    protected override void OnInitialized()
+    {
+        _producers = ProducerService.GetProducers();
+    }
+}
