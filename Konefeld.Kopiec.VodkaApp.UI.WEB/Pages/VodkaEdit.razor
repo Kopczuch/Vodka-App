@@ -1,0 +1,115 @@
+﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
+@using Konefeld.Kopiec.VodkaApp.Interfaces
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
+@using Konefeld.Kopiec.VodkaApp.Core
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
+@inject NavigationManager Navigation
+@inject VodkaService VodkaService
+@page "/vodkas/{Id:int}"
+
+<PageTitle>Edit</PageTitle>
+<h3>Edit vodka</h3>
+
+@if (_producers.Count != 0)
+{
+    <form @onsubmit="UpdateVodka">
+        <div class="row">
+            <div class="w-50 mb-3">
+                <div class="form-group">
+                    <label for="name">*Name:</label>
+                    <input id="name" class="form-control" @bind="_updatedVodka.Name" required/>
+                </div>
+            </div>
+
+            <div class="w-50 mb-3">
+                <div class="form-group">
+                    <label for="flavourProfile">Flavour profile:</label>
+                    <input id="flavourProfile" class="form-control" @bind="_updatedVodka.FlavourProfile"/>
+                </div>
+            </div>
+
+            <div class="w-50 mb-3">
+                <div class="form-group">
+                    <label for="volumeInLiters">*Volume in liters:</label>
+                    <input id="volumeInLiters" class="form-control" @bind="_updatedVodka.VolumeInLiters" type="number" min="0" step="0.1" required/>
+                </div>
+            </div>
+
+            <div class="w-50 mb-3">
+                <div class="form-group">
+                    <label for="alcoholPercentage">*Alcohol percentage:</label>
+                    <input id="alcoholPercentage" class="form-control" @bind="_updatedVodka.AlcoholPercentage" type="number" min="0" step="0.5" required />
+                </div>
+            </div>
+
+            <div class="w-50 mb-3">
+                <div class="form-group">
+                    <label for="price">*Price:</label>
+                    <input id="price" class="form-control" @bind="_updatedVodka.Price" type="number" min="0" step="0.1" required/>
+                </div>
+            </div>
+
+            <div class="w-25 mb-3">
+                <div class="form-group">
+                    <label for="type">*Type:</label>
+                    <select id="type" class="form-control" @bind="_updatedVodka.Type">
+                        <option value="@VodkaType.Corn">Corn</option>
+                        <option value="@VodkaType.Flavoured">Flavoured</option>
+                        <option value="@VodkaType.Fruit">Fruit</option>
+                        <option value="@VodkaType.Grain">Grain</option>
+                        <option value="@VodkaType.Potato">Potato</option>
+                        <option value="@VodkaType.Rye">Rye</option>
+                        <option value="@VodkaType.Wheat">Wheat</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="w-25 mb-3">
+                <div class="form-group">
+                    <label for="producer">*Producer:</label>
+                    <select id="producer" class="form-control" @bind="_updatedVodka.ProducerId" required>
+                        @foreach (var producer in _producers)
+                        {
+                            <option value="@producer.Id">@producer.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
+            <button class="btn btn-danger mb-3" @onclick="Cancel" @onclick:preventDefault>Cancel</button>
+        </div>
+
+    </form>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private IVodkaDto _updatedVodka = new VodkaDto();
+    private IList<ProducerData> _producers = new List<ProducerData>();
+
+    protected override void OnInitialized()
+    {
+        _updatedVodka = VodkaService.GetVodka(Id);
+        _producers = VodkaService.GetProducersData();
+    }
+
+    private void UpdateVodka()
+    {
+        var success = VodkaService.UpdateVodka(Id, _updatedVodka);
+
+        if (success)
+            Navigation.NavigateTo("/");
+
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+}

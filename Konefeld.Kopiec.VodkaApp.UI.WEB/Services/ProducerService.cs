@@ -1,6 +1,7 @@
 ﻿using Konefeld.Kopiec.VodkaApp.Core;
-using Konefeld.Kopiec.VodkaApp.UI.WEB.Models;
+using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto;
+using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels;
 
 namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
 {
@@ -13,12 +14,23 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             _blc = Blc.Blc.Instance;
         }
 
-        public int CreateProducer(string name, string description, string countryOfOrigin,
-            int establishmentYear, ProducerExportStatus producerExportStatus)
+        public int CreateProducer(IProducerDto newProducer)
         {
-            var newProducer = new ProducerDto(name, description, countryOfOrigin, establishmentYear, producerExportStatus);
-
             return _blc.CreateProducer(newProducer);
+        }
+
+        public ProducerDto GetProducer(int id)
+        {
+            var producer = _blc.GetProducer(id);
+
+            return new ProducerDto
+            {
+                Name = producer.Name,
+                Description = producer.Description,
+                CountryOfOrigin = producer.CountryOfOrigin,
+                EstablishmentYear = producer.EstablishmentYear,
+                ExportStatus = producer.ExportStatus
+            };
         }
 
         public IList<ProducerViewModel> GetProducers()
@@ -27,6 +39,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
 
             return producers.Select(p => new ProducerViewModel
             {
+                Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
                 CountryOfOrigin = p.CountryOfOrigin,
@@ -35,12 +48,8 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             }).ToList();
         }
 
-        public bool UpdateProducer(int id, string name, string description, string countryOfOrigin,
-            int establishmentYear, ProducerExportStatus producerExportStatus)
+        public bool UpdateProducer(int id, IProducerDto updatedProducer)
         {
-            var updatedProducer = new ProducerDto(name, description,
-                countryOfOrigin, establishmentYear, producerExportStatus);
-
             return _blc.UpdateProducer(id, updatedProducer);
         }
 

@@ -9,7 +9,10 @@ namespace Konefeld.Kopiec.VodkaApp.Interfaces
         int CreateProducer(IProducerDto producer);
 
         // Read
+        IVodka GetVodka(int id);
+        IProducer GetProducer(int id);
         IEnumerable<IVodka> GetAllVodkas();
+        IEnumerable<IVodka> GetFilteredVodkas(IVodkaFilter filter);
         IEnumerable<IProducer> GetAllProducers();
 
         // Update

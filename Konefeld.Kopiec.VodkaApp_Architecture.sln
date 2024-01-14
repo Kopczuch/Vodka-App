@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.UI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.DaoSqlite", "Konefeld.Kopiec.VodkaApp.DaoSqlite\Konefeld.Kopiec.VodkaApp.DaoSqlite.csproj", "{4F7D113C-1A33-4F3B-A132-B28F0A1B501B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Konefeld.Kopiec.VodkaApp.UI.WEB", "Konefeld.Kopiec.VodkaApp.UI.WEB\Konefeld.Kopiec.VodkaApp.UI.WEB.csproj", "{8392895E-6D67-4EE8-8D6F-4D6743229CA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Konefeld.Kopiec.VodkaApp.UI.WEB", "Konefeld.Kopiec.VodkaApp.UI.WEB\Konefeld.Kopiec.VodkaApp.UI.WEB.csproj", "{8392895E-6D67-4EE8-8D6F-4D6743229CA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

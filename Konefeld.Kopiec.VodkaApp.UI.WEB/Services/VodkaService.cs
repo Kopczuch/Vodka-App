@@ -1,4 +1,6 @@
 ﻿using Konefeld.Kopiec.VodkaApp.Core;
+using Konefeld.Kopiec.VodkaApp.Interfaces;
+using Konefeld.Kopiec.VodkaApp.UI.WEB.Models;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels;
 
@@ -13,13 +15,25 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             _blc = Blc.Blc.Instance;
         }
 
-        public int CreateVodka(string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
-            double volumeInLiters, double price, string? flavourProfile)
+        public int CreateVodka(IVodkaDto newVodka)
         {
-            var newVodka = new VodkaDto(name, producerId, vodkaType, alcoholPercentage, volumeInLiters, price,
-                flavourProfile);
-
             return _blc.CreateVodka(newVodka);
+        }
+
+        public IVodkaDto GetVodka(int id)
+        {
+            var vodka = _blc.GetVodka(id);
+
+            return new VodkaDto
+            {
+                Name = vodka.Name,
+                ProducerId = vodka.Producer.Id,
+                Type = vodka.Type,
+                AlcoholPercentage = vodka.AlcoholPercentage,
+                VolumeInLiters = vodka.VolumeInLiters,
+                Price = vodka.Price,
+                FlavourProfile = vodka.FlavourProfile
+            };
         }
 
         public IList<VodkaViewModel> GetVodkas()
@@ -39,12 +53,25 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             }).ToList();
         }
 
-        public bool UpdateVodka(int id, string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
-            double volumeInLiters, double price, string? flavourProfile)
+        public IList<VodkaViewModel> GetFilteredVodkas(IVodkaFilter filter)
         {
-            var updatedVodka = new VodkaDto(name, producerId, vodkaType, alcoholPercentage, volumeInLiters, price,
-                flavourProfile);
+            var vodkas = _blc.GetFilteredVodkas(filter);
 
+            return vodkas.Select(v => new VodkaViewModel
+            {
+                Id = v.Id,
+                Name = v.Name,
+                ProducerName = v.Producer.Name,
+                Type = v.Type.ToString(),
+                AlcoholPercentage = v.AlcoholPercentage,
+                VolumeInLiters = v.VolumeInLiters,
+                Price = v.Price,
+                FlavourProfile = v.FlavourProfile
+            }).ToList();
+        }
+
+        public bool UpdateVodka(int id, IVodkaDto updatedVodka)
+        {
             return _blc.UpdateVodka(id, updatedVodka);
         }
 
@@ -53,5 +80,14 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             return _blc.DeleteVodka(id);
         }
 
+        public IList<ProducerData> GetProducersData()
+        {
+            var producers = _blc.GetProducers().ToList();
+            return producers.Select(p => new ProducerData
+            {
+                Id = p.Id,
+                Name = p.Name
+            }).ToList();
+        }
     }
 }

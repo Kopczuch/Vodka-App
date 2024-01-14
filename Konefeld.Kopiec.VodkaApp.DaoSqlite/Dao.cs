@@ -35,6 +35,20 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
         }
 
         // Read
+        public IVodka GetVodka(int id)
+        {
+            var vodka = _context.Vodkas.FirstOrDefault(v => v.Id == id);
+
+            return vodka ?? throw new NullReferenceException("Vodka with given ID does not exist");
+        }
+
+        public IProducer GetProducer(int id)
+        {
+            var producer = _context.Producers.FirstOrDefault(p => p.Id == id);
+
+            return producer ?? throw new NullReferenceException("Producer with given ID does not exist.");
+        }
+
         public IEnumerable<IVodka> GetAllVodkas()
         {
             return _context.Vodkas
@@ -50,6 +64,22 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
                     Price = v.Price,
                     FlavourProfile = v.FlavourProfile
                 }).ToList();
+        }
+
+        public IEnumerable<IVodka> GetFilteredVodkas(IVodkaFilter filter)
+        {
+            var filteredVodkas = _context.Vodkas.Where(vodka =>
+                (string.IsNullOrWhiteSpace(filter.SearchTerm) ||
+                 vodka.Name.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                 (vodka.FlavourProfile != null && vodka.FlavourProfile.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase))) &&
+                (filter.Volume == 0 || vodka.VolumeInLiters == filter.Volume) &&
+                (filter.Alcohol == 0 || vodka.AlcoholPercentage == filter.Alcohol) &&
+                (filter.PriceLowerBound == 0 || (filter.PriceLowerBound <= vodka.Price && vodka.Price <= filter.PriceUpperBound)) &&
+                (string.IsNullOrWhiteSpace(filter.Type) || vodka.Type.ToString().Equals(filter.Type, StringComparison.OrdinalIgnoreCase)) &&
+                (filter.ProducerId == 0 || vodka.Producer.Id == filter.ProducerId)
+            ).ToList();
+
+            return filteredVodkas;
         }
 
         public IEnumerable<IProducer> GetAllProducers()
@@ -124,13 +154,6 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
                 Price = vodka.Price,
                 FlavourProfile = vodka.FlavourProfile
             };
-        }
-
-        private IProducer GetProducer(int id)
-        {
-            var producer = _context.Producers.FirstOrDefault(p => p.Id == id);
-
-            return producer ?? throw new NullReferenceException("Producer with given ID does not exist.");
         }
 
         private Producer MapProducerDto(IProducerDto producer)

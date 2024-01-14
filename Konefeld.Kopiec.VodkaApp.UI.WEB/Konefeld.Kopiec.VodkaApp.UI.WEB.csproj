@@ -17,4 +17,10 @@
     <ProjectReference Include="..\Konefeld.Kopiec.VodkaApp\Konefeld.Kopiec.VodkaApp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

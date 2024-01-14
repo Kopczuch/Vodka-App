@@ -1,4 +1,4 @@
-﻿namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Models
+﻿namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels
 {
     public class ProducerViewModel
     {

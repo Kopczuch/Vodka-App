@@ -1,0 +1,88 @@
+﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
+@using Konefeld.Kopiec.VodkaApp.Interfaces
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
+@using Konefeld.Kopiec.VodkaApp.Core
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
+@inject NavigationManager Navigation
+@inject ProducerService ProducerService
+@page "/producers/{Id:int}"
+
+<PageTitle>Edit</PageTitle>
+<h3>Edit producer</h3>
+
+<form @onsubmit="UpdateProducer">
+    <div class="row mb-3">
+        <div class="col-xs-12 col-md-3">
+            <div class="form-group">
+                <label for="name">*Name:</label>
+                <input id="name" class="form-control" @bind="_updatedProducer.Name" required />
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-3">
+            <div class="form-group">
+                <label for="countryOfOrigin">*Country of origin:</label>
+                <input id="countryOfOrigin" class="form-control" @bind="_updatedProducer.CountryOfOrigin" required/>
+            </div>
+        </div>
+    
+        <div class="col-xs-12 col-md-3">
+            <div class="form-group">
+                <label for="establishmentYear">*Establishment year:</label>
+                <input id="establishmentYear" class="form-control" @bind="_updatedProducer.EstablishmentYear" type="number" min="0" step="1" required />
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-md-3">
+            <div class="form-group">
+                <label for="type">*Export status:</label>
+                <select id="type" class="form-control" @bind="_updatedProducer.ExportStatus" required>
+                    <option value="@ProducerExportStatus.DomesticOnly">@ProducerExportStatus.DomesticOnly.ToPrettyString()</option>
+                    <option value="@ProducerExportStatus.GlobalExport">@ProducerExportStatus.GlobalExport.ToPrettyString()</option>
+                    <option value="@ProducerExportStatus.RegionalExport">@ProducerExportStatus.RegionalExport.ToPrettyString()</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="form-group">
+            <label for="description">*Description:</label>
+            <textarea id="description" class="form-control" @bind="_updatedProducer.Description" maxlength="300" required>
+        </textarea>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
+        <button class="btn btn-danger mb-3" @onclick="Cancel" @onclick:preventDefault>Cancel</button>
+    </div>
+
+</form>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private IProducerDto _updatedProducer = new ProducerDto();
+
+    protected override void OnInitialized()
+    {
+        _updatedProducer = ProducerService.GetProducer(Id);
+    }
+
+    private void UpdateProducer()
+    {
+        var success = ProducerService.UpdateProducer(Id, _updatedProducer);
+
+        if (success)
+            Navigation.NavigateTo("/producers");
+
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/producers");
+    }
+
+}

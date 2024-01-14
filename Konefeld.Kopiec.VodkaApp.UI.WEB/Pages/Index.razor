@@ -1,34 +1,236 @@
 ﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels
+@using Konefeld.Kopiec.VodkaApp.Interfaces
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
+@using Konefeld.Kopiec.VodkaApp.Core
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects
+@inject NavigationManager Navigation
 @inject VodkaService VodkaService
 @page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Vodkas</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Vodkas</h1>
+
+@if (_producers.Count != 0)
+{
+    <form @onsubmit="AddVodka">
+        <div class="row mb-3">
+            <div class="col-xs-12 col-md-4">
+                <div class="form-group">
+                    <label for="name">*Name:</label>
+                    <input id="name" class="form-control" @bind="_newVodka.Name" required/>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-md-4">
+                <div class="form-group">
+                    <label for="flavourProfile">Flavour profile:</label>
+                    <input id="flavourProfile" class="form-control" @bind="_newVodka.FlavourProfile" />
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-md-4">
+                <div class="form-group">
+                    <label for="volumeInLiters">*Volume in liters:</label>
+                    <input id="volumeInLiters" class="form-control" @bind="_newVodka.VolumeInLiters" type="number" min="0" step="0.1" required />
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-xs-12 col-md-4">
+                <div class="form-group">
+                    <label for="alcoholPercentage">*Alcohol percentage:</label>
+                    <input id="alcoholPercentage" class="form-control" @bind="_newVodka.AlcoholPercentage" type="number" min="0" step="0.5" required/>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-md-4">
+                <div class="form-group">
+                    <label for="price">*Price:</label>
+                    <input id="price" class="form-control" @bind="_newVodka.Price" type="number" min="0" step="0.01" required/>
+                </div>
+            </div>
+
+            <div class="col-xs-6 col-md-2">
+                <div class="form-group">
+                    <label for="type">*Type:</label>
+                    <select id="type" class="form-control" @bind="_newVodka.Type" required>
+                        <option value="@VodkaType.Corn">@VodkaType.Corn.ToString()</option>
+                        <option value="@VodkaType.Flavoured">@VodkaType.Flavoured.ToString()</option>
+                        <option value="@VodkaType.Fruit">@VodkaType.Fruit.ToString()</option>
+                        <option value="@VodkaType.Grain">@VodkaType.Grain.ToString()</option>
+                        <option value="@VodkaType.Potato">@VodkaType.Potato.ToString()</option>
+                        <option value="@VodkaType.Rye">@VodkaType.Rye.ToString()</option>
+                        <option value="@VodkaType.Wheat">@VodkaType.Wheat.ToString()</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-xs-6 col-md-2">
+                <div class="form-group">
+                    <label for="producer">*Producer:</label>
+                    <select id="producer" class="form-control" @bind="_newVodka.ProducerId" required>
+                        @foreach (var producer in _producers)
+                        {
+                            <option value="@producer.Id">@producer.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-4">Add Vodka</button>
+
+    </form>
+}
+
+<div class="row">
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="search">Search:</label>
+            <input id="search" class="form-control" @bind="_filter.SearchTerm" />
+        </div>
+    </div>
+
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="volume">Volume in liters:</label>
+            <input id="volume" class="form-control" @bind="_filter.Volume" type="number" min="0" step="0.1" />
+        </div>
+    </div>
+    
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="percentage">Alcohol %:</label>
+            <input id="percentage" class="form-control" @bind="_filter.Alcohol" type="number" min="0" step="0.5" />
+        </div>
+    </div>
+    
+    <div class="col-xl-2 mb-3">
+        <label for="priceRange">Price range:</label>
+        <div id="priceRange" class="form-group row">
+            <div class="col-6">
+                <input class="form-control" @bind="_filter.PriceLowerBound" type="number" min="0" step="0.01"/>
+            </div>
+            <div class="col-6">
+                <input class="form-control" @bind="_filter.PriceUpperBound" type="number" min="0" step="0.01" />
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="filterType">Type:</label>
+            <select id="filterType" class="form-control" @bind="_filter.Type">
+                <option value="">All types</option>
+                <option value="@VodkaType.Corn.ToString()">@VodkaType.Corn.ToString()</option>
+                <option value="@VodkaType.Flavoured.ToString()">@VodkaType.Flavoured.ToString()</option>
+                <option value="@VodkaType.Fruit.ToString()">@VodkaType.Fruit.ToString()</option>
+                <option value="@VodkaType.Grain.ToString()">@VodkaType.Grain.ToString()</option>
+                <option value="@VodkaType.Potato.ToString()">@VodkaType.Potato.ToString()</option>
+                <option value="@VodkaType.Rye.ToString()">@VodkaType.Rye.ToString()</option>
+                <option value="@VodkaType.Wheat.ToString()">@VodkaType.Wheat.ToString()</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="filterProducer">Producer:</label>
+            <select id="filterProducer" class="form-control" @bind="_filter.ProducerId">
+                <option value="0">All Producers</option>
+                @foreach (var producer in _producers)
+                {
+                    <option value="@producer.Id">@producer.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+    
+</div>
+<button class="btn btn-secondary mb-4" @onclick="() => ApplyFilters()">
+    <i class="oi oi-magnifying-glass"></i> Search
+</button>
 
 @if (_vodkas.Count != 0)
 {
-    <ul>
+    <table class="table mb-5" style="table-layout: auto">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Flavour profile</th>
+            <th>Volume in liters</th>
+            <th>Alcohol percentage</th>
+            <th>Price</th>
+            <th>Producer</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
         @foreach (var vodka in _vodkas)
         {
-            <li>
-                <strong>Name:</strong> @vodka.Name <br/>
-                <strong>Producer:</strong> @vodka.ProducerName
-            </li>
+            <tr>
+                <td>@vodka.Name</td>
+                <td>@vodka.Type</td>
+                <td>@(string.IsNullOrWhiteSpace(vodka.FlavourProfile) ? "Not specified" : vodka.FlavourProfile)</td>
+                <td>@vodka.VolumeInLiters</td>
+                <td>@vodka.AlcoholPercentage</td>
+                <td>@vodka.Price</td>
+                <td>@vodka.ProducerName</td>
+                <td>
+                    <button class="btn btn-outline-primary" @onclick="() => GoToEditVodka(vodka.Id)">
+                        <i class="oi oi-pencil" aria-hidden="true"></i>
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-outline-danger" @onclick="() => DeleteVodka(vodka.Id)">
+                        <i class="oi oi-circle-x" aria-hidden="true"></i>
+                    </button>
+                </td>
+            </tr>
         }
-    </ul>
+        </tbody>
+    </table>
 }
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
 
 @code {
     private IList<VodkaViewModel> _vodkas = new List<VodkaViewModel>();
+    private IList<ProducerData> _producers = new List<ProducerData>();
+    private IVodkaDto _newVodka = new VodkaDto();
+
+    private IVodkaFilter _filter = new VodkaFilter();
 
     protected override void OnInitialized()
     {
         _vodkas = VodkaService.GetVodkas();
+        _producers = VodkaService.GetProducersData();
+    }
+
+    private void AddVodka()
+    {
+        var id = VodkaService.CreateVodka(_newVodka);
+        _newVodka = new VodkaDto();
+        _vodkas = VodkaService.GetVodkas();
+    }
+
+    private void DeleteVodka(int id)
+    {
+        var success = VodkaService.DeleteVodka(id);
+        _vodkas = VodkaService.GetVodkas();
+    }
+
+    private void GoToEditVodka(int id)
+    {
+        Navigation.NavigateTo($"/vodkas/{id}");
+    }
+
+    private void ApplyFilters()
+    {
+        _vodkas = VodkaService.GetFilteredVodkas(_filter);
     }
 }

@@ -5,6 +5,10 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 {
     public class VodkaDto : IVodkaDto
     {
+        public VodkaDto()
+        {
+        }
+
         public VodkaDto(string name, int producerId, VodkaType vodkaType, double alcoholPercentage,
             double volumeInLiters, double price, string? flavourProfile)
         {

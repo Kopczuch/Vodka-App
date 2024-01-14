@@ -1,7 +1,4 @@
-using Konefeld.Kopiec.VodkaApp.UI.WEB.Data;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Konefeld.Kopiec.VodkaApp.UI.WEB
 {
