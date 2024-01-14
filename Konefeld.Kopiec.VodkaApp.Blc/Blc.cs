@@ -62,6 +62,7 @@ namespace Konefeld.Kopiec.VodkaApp.Blc
         public IEnumerable<IVodka> GetVodkas() => Dao.GetAllVodkas();
         public IEnumerable<IVodka> GetFilteredVodkas(IVodkaFilter filter) => Dao.GetFilteredVodkas(filter);
         public IEnumerable<IProducer> GetProducers() => Dao.GetAllProducers();
+        public IEnumerable<IProducer> GetFilteredProducers(IProducerFilter filter) => Dao.GetFilteredProducers(filter);
 
         // Update
         public bool UpdateVodka(int id, IVodkaDto vodka) => Dao.UpdateVodka(id, vodka);

@@ -89,5 +89,15 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
                 Name = p.Name
             }).ToList();
         }
+
+        public bool Validate(IVodkaDto vodka)
+        {
+            if (string.IsNullOrWhiteSpace(vodka.Name))
+                return false;
+            if (vodka.ProducerId == 0)
+                return false;
+
+            return true;
+        }
     }
 }

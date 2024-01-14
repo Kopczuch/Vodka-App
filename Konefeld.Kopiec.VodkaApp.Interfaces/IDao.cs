@@ -14,6 +14,7 @@ namespace Konefeld.Kopiec.VodkaApp.Interfaces
         IEnumerable<IVodka> GetAllVodkas();
         IEnumerable<IVodka> GetFilteredVodkas(IVodkaFilter filter);
         IEnumerable<IProducer> GetAllProducers();
+        IEnumerable<IProducer> GetFilteredProducers(IProducerFilter filter);
 
         // Update
         bool UpdateVodka(int id, IVodkaDto vodka);

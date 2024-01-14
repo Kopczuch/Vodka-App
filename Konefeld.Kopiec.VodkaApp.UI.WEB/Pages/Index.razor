@@ -7,6 +7,7 @@
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects
 @inject NavigationManager Navigation
 @inject VodkaService VodkaService
+@inject IJSRuntime JsRuntime
 @page "/"
 
 <PageTitle>Vodkas</PageTitle>
@@ -34,7 +35,7 @@
             <div class="col-xs-12 col-md-4">
                 <div class="form-group">
                     <label for="volumeInLiters">*Volume in liters:</label>
-                    <input id="volumeInLiters" class="form-control" @bind="_newVodka.VolumeInLiters" type="number" min="0" step="0.1" required />
+                    <input id="volumeInLiters" class="form-control" @bind="_newVodka.VolumeInLiters" type="number" min="0" step="0.05" required />
                 </div>
             </div>
         </div>
@@ -82,7 +83,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mb-4">Add Vodka</button>
+        <button type="submit" class="btn btn-success mb-4">Add Vodka</button>
 
     </form>
 }
@@ -98,7 +99,7 @@
     <div class="col-xl-2 mb-3">
         <div class="form-group">
             <label for="volume">Volume in liters:</label>
-            <input id="volume" class="form-control" @bind="_filter.Volume" type="number" min="0" step="0.1" />
+            <input id="volume" class="form-control" @bind="_filter.Volume" type="number" min="0" step="0.05" />
         </div>
     </div>
     
@@ -151,9 +152,14 @@
     </div>
     
 </div>
-<button class="btn btn-secondary mb-4" @onclick="() => ApplyFilters()">
-    <i class="oi oi-magnifying-glass"></i> Search
-</button>
+<div>
+    <button class="btn btn-primary mb-4" @onclick="ApplyFilters">
+        <i class="oi oi-magnifying-glass"></i> Search
+    </button>
+    <button class="btn btn-secondary mb-4" @onclick="ClearFilters">
+        Clear Filters
+    </button>
+</div>
 
 @if (_vodkas.Count != 0)
 {
@@ -163,8 +169,8 @@
             <th>Name</th>
             <th>Type</th>
             <th>Flavour profile</th>
-            <th>Volume in liters</th>
-            <th>Alcohol percentage</th>
+            <th>Volume</th>
+            <th>Alcohol</th>
             <th>Price</th>
             <th>Producer</th>
             <th></th>
@@ -178,8 +184,8 @@
                 <td>@vodka.Name</td>
                 <td>@vodka.Type</td>
                 <td>@(string.IsNullOrWhiteSpace(vodka.FlavourProfile) ? "Not specified" : vodka.FlavourProfile)</td>
-                <td>@vodka.VolumeInLiters</td>
-                <td>@vodka.AlcoholPercentage</td>
+                <td>@vodka.VolumeInLiters L</td>
+                <td>@vodka.AlcoholPercentage %</td>
                 <td>@vodka.Price</td>
                 <td>@vodka.ProducerName</td>
                 <td>
@@ -197,6 +203,31 @@
         </tbody>
     </table>
 }
+else
+{
+    <table class="table mb-5" style="table-layout: auto">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Flavour profile</th>
+                <th>Volume in liters</th>
+                <th>Alcohol percentage</th>
+                <th>Price</th>
+                <th>Producer</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="9" class="text-center">
+                    <span><strong>Sorry! We did not find any data for you.</strong></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
 
 @code {
     private IList<VodkaViewModel> _vodkas = new List<VodkaViewModel>();
@@ -211,17 +242,42 @@
         _producers = VodkaService.GetProducersData();
     }
 
-    private void AddVodka()
+    private async Task AddVodka()
     {
+        if (!VodkaService.Validate(_newVodka))
+        {
+            await Popup("Validation for new vodka object failed. Please double-check inputted data.");
+            return;
+        }
+
         var id = VodkaService.CreateVodka(_newVodka);
         _newVodka = new VodkaDto();
         _vodkas = VodkaService.GetVodkas();
     }
 
-    private void DeleteVodka(int id)
+    private async Task Popup(string message)
     {
+        await JsRuntime.InvokeVoidAsync("alert", message);
+    }
+
+    private async Task DeleteVodka(int id)
+    {
+        var confirmed = await ConfirmPopup();
+
+        if (!confirmed)
+            return;
+
         var success = VodkaService.DeleteVodka(id);
+
+        if (!success)
+            await Popup("Failed to delete vodka. Please try again later.");
+
         _vodkas = VodkaService.GetVodkas();
+    }
+
+    private async Task<bool> ConfirmPopup()
+    {
+        return await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete vodka?");
     }
 
     private void GoToEditVodka(int id)
@@ -232,5 +288,11 @@
     private void ApplyFilters()
     {
         _vodkas = VodkaService.GetFilteredVodkas(_filter);
+    }
+
+    private void ClearFilters()
+    {
+        _filter = new VodkaFilter();
+        _vodkas = VodkaService.GetVodkas();
     }
 }

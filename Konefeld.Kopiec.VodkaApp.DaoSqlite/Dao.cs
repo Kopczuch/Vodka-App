@@ -1,4 +1,5 @@
-﻿using Konefeld.Kopiec.VodkaApp.DaoSqlite.BO;
+﻿using Konefeld.Kopiec.VodkaApp.Core;
+using Konefeld.Kopiec.VodkaApp.DaoSqlite.BO;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -68,14 +69,16 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
 
         public IEnumerable<IVodka> GetFilteredVodkas(IVodkaFilter filter)
         {
-            var filteredVodkas = _context.Vodkas.Where(vodka =>
+            var vodkas = _context.Vodkas.ToList();
+
+            var filteredVodkas = vodkas.Where(vodka =>
                 (string.IsNullOrWhiteSpace(filter.SearchTerm) ||
-                 vodka.Name.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                 (vodka.FlavourProfile != null && vodka.FlavourProfile.Contains(filter.SearchTerm, StringComparison.OrdinalIgnoreCase))) &&
+                 vodka.Name.Contains(filter.SearchTerm, StringComparison.InvariantCultureIgnoreCase) ||
+                 (!string.IsNullOrWhiteSpace(vodka.FlavourProfile) && vodka.FlavourProfile.Contains(filter.SearchTerm, StringComparison.InvariantCultureIgnoreCase))) &&
                 (filter.Volume == 0 || vodka.VolumeInLiters == filter.Volume) &&
                 (filter.Alcohol == 0 || vodka.AlcoholPercentage == filter.Alcohol) &&
-                (filter.PriceLowerBound == 0 || (filter.PriceLowerBound <= vodka.Price && vodka.Price <= filter.PriceUpperBound)) &&
-                (string.IsNullOrWhiteSpace(filter.Type) || vodka.Type.ToString().Equals(filter.Type, StringComparison.OrdinalIgnoreCase)) &&
+                (filter is { PriceLowerBound: 0, PriceUpperBound: 0 } || IsInRange(filter.PriceLowerBound, filter.PriceUpperBound, vodka.Price)) &&
+                (string.IsNullOrWhiteSpace(filter.Type) || vodka.Type.ToString().Equals(filter.Type, StringComparison.InvariantCultureIgnoreCase)) &&
                 (filter.ProducerId == 0 || vodka.Producer.Id == filter.ProducerId)
             ).ToList();
 
@@ -85,6 +88,34 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
         public IEnumerable<IProducer> GetAllProducers()
         {
             return _context.Producers.ToList();
+        }
+
+        public IEnumerable<IProducer> GetFilteredProducers(IProducerFilter filter)
+        {
+            var producers = _context.Producers.ToList();
+
+            var filteredProducers = producers.Where(producer =>
+                (string.IsNullOrWhiteSpace(filter.SearchTerm) ||
+                 producer.Name.Contains(filter.SearchTerm, StringComparison.InvariantCultureIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(filter.Country) ||
+                 producer.CountryOfOrigin.Contains(filter.Country, StringComparison.InvariantCultureIgnoreCase)) &&
+                (filter is { MinYear: 0, MaxYear: 0 } || IsInRange(filter.MinYear, filter.MaxYear, producer.EstablishmentYear)) &&
+                (string.IsNullOrWhiteSpace(filter.ExportStatus) || producer.ExportStatus.ToString()
+                    .Equals(filter.ExportStatus, StringComparison.InvariantCultureIgnoreCase))).ToList();
+
+            return filteredProducers;
+        }
+
+        private bool IsInRange(double min, double max, double value)
+        {
+            return min switch
+            {
+                0 when max == 0 => true,
+                0 when max > 0 => value <= max,
+                > 0 when max == 0 => value >= min,
+                > 0 when max > 0 => min <= value && value <= max,
+                _ => false
+            };
         }
 
         // Update

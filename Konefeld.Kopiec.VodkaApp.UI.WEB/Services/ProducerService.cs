@@ -48,6 +48,21 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             }).ToList();
         }
 
+        public IList<ProducerViewModel> GetFilteredProducers(IProducerFilter filter)
+        {
+            var producers = _blc.GetFilteredProducers(filter).ToList();
+
+            return producers.Select(p => new ProducerViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                CountryOfOrigin = p.CountryOfOrigin,
+                EstablishmentYear = p.EstablishmentYear,
+                ExportStatus = p.ExportStatus.ToPrettyString()
+            }).ToList();
+        }
+
         public bool UpdateProducer(int id, IProducerDto updatedProducer)
         {
             return _blc.UpdateProducer(id, updatedProducer);
@@ -56,6 +71,18 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
         public bool DeleteProducer(int id)
         {
             return _blc.DeleteProducer(id);
+        }
+
+        public bool Validate(IProducerDto producer)
+        {
+            if (string.IsNullOrWhiteSpace(producer.Name))
+                return false;
+            if (string.IsNullOrWhiteSpace(producer.Description))
+                return false;
+            if (string.IsNullOrEmpty(producer.CountryOfOrigin))
+                return false;
+
+            return true;
         }
     }
 }

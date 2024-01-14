@@ -4,8 +4,10 @@
 @using Konefeld.Kopiec.VodkaApp.Interfaces
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 @using Konefeld.Kopiec.VodkaApp.Core
+@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects
 @inject ProducerService ProducerService
 @inject NavigationManager Navigation
+@inject IJSRuntime JsRuntime
 
 <PageTitle>Producers</PageTitle>
 
@@ -36,8 +38,8 @@
 
         <div class="col-xs-6 col-md-3">
             <div class="form-group">
-                <label for="type">*Export status:</label>
-                <select id="type" class="form-control" @bind="_newProducer.ExportStatus" required>
+                <label for="producerExportStatus">*Export status:</label>
+                <select id="producerExportStatus" class="form-control" @bind="_newProducer.ExportStatus" required>
                     <option value="@ProducerExportStatus.DomesticOnly">@ProducerExportStatus.DomesticOnly.ToPrettyString()</option>
                     <option value="@ProducerExportStatus.GlobalExport">@ProducerExportStatus.GlobalExport.ToPrettyString()</option>
                     <option value="@ProducerExportStatus.RegionalExport">@ProducerExportStatus.RegionalExport.ToPrettyString()</option>
@@ -54,17 +56,86 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary mb-3">Add Producer</button>
+    <button type="submit" class="btn btn-success mb-3">Add Producer</button>
 
 </form>
 
+<div class="row">
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="search">Search:</label>
+            <input id="search" class="form-control" @bind="_filter.SearchTerm" />
+        </div>
+    </div>
+
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="country">Country:</label>
+            <input id="country" class="form-control" @bind="_filter.Country" />
+        </div>
+    </div>
+
+    <div class="col-xl-2 mb-3">
+        <label for="yearRange">Year range:</label>
+        <div id="yearRange" class="form-group row">
+            <div class="col-6">
+                <input class="form-control" @bind="_filter.MinYear" type="number" min="0" step="1" />
+            </div>
+            <div class="col-6">
+                <input class="form-control" @bind="_filter.MaxYear" type="number" min="0" step="1" />
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 mb-3">
+        <div class="form-group">
+            <label for="exportStatus">Export:</label>
+            <select id="exportStatus" class="form-control" @bind="_filter.ExportStatus">
+                <option value="">All</option>
+                <option value="@ProducerExportStatus.DomesticOnly.ToString()">@ProducerExportStatus.DomesticOnly.ToPrettyString()</option>
+                <option value="@ProducerExportStatus.GlobalExport.ToString()">@ProducerExportStatus.GlobalExport.ToPrettyString()</option>
+                <option value="@ProducerExportStatus.RegionalExport.ToString()">@ProducerExportStatus.RegionalExport.ToPrettyString()</option>
+            </select>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <button class="btn btn-primary mb-4" @onclick="ApplyFilters">
+        <i class="oi oi-magnifying-glass"></i> Search
+    </button>
+    <button class="btn btn-secondary mb-4" @onclick="ClearFilters">
+        Clear Filters
+    </button>
+</div>
+
 @if (_producers.Count == 0)
 {
-    <p><em>Loading...</em></p>
+    <table class="table mb-5" style="table-layout: auto">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Country of origin</th>
+            <th>Establishment year</th>
+            <th>Export status</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="7" class="text-center">
+                    <span><strong>Sorry! We did not find any data for you.</strong></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 }
 else
 {
-    <table class="table" style="table-layout: auto">
+    <table class="table mb-5" style="table-layout: auto">
         <thead>
             <tr>
                 <th>Name</th>
@@ -104,21 +175,33 @@ else
 @code {
     private IList<ProducerViewModel> _producers = new List<ProducerViewModel>();
     private IProducerDto _newProducer = new ProducerDto();
+    private IProducerFilter _filter = new ProducerFilter();
 
     protected override void OnInitialized()
     {
         _producers = ProducerService.GetProducers();
     }
 
-    private void AddProducer()
+    private async Task AddProducer()
     {
+        if (!ProducerService.Validate(_newProducer))
+        {
+            await Popup("Validation for new producer object failed. Please double-check inputted data.");
+            return;
+        }
+
         var id = ProducerService.CreateProducer(_newProducer);
         _newProducer = new ProducerDto();
         _producers = ProducerService.GetProducers();
     }
 
-    private void DeleteProducer(int id)
+    private async Task DeleteProducer(int id)
     {
+        var confirmed = await ConfirmPopup();
+
+        if (!confirmed)
+            return;
+
         var success = ProducerService.DeleteProducer(id);
         _producers = ProducerService.GetProducers();
     }
@@ -126,5 +209,26 @@ else
     private void GoToEditProducer(int id)
     {
         Navigation.NavigateTo($"/producers/{id}");
+    }
+
+    private void ApplyFilters()
+    {
+        _producers = ProducerService.GetFilteredProducers(_filter);
+    }
+
+    private void ClearFilters()
+    {
+        _filter = new ProducerFilter();
+        _producers = ProducerService.GetProducers();
+    }
+
+    private async Task Popup(string message)
+    {
+        await JsRuntime.InvokeVoidAsync("alert", message);
+    }
+
+    private async Task<bool> ConfirmPopup()
+    {
+        return await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete producer?");
     }
 }
