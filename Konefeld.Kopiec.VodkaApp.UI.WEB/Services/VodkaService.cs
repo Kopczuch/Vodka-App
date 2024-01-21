@@ -6,7 +6,19 @@ using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels;
 
 namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
 {
-    public class VodkaService
+    public interface IVodkaService
+    {
+        int CreateVodka(IVodkaDto newVodka);
+        IVodkaDto GetVodka(int id);
+        IList<VodkaViewModel> GetVodkas();
+        IList<VodkaViewModel> GetFilteredVodkas(IVodkaFilter filter);
+        bool UpdateVodka(int id, IVodkaDto updatedVodka);
+        bool DeleteVodka(int id);
+        IList<ProducerData> GetProducersData();
+        (bool IsSuccess, string Message) Validate(IVodkaDto vodka);
+    }
+
+    public class VodkaService : IVodkaService
     {
         private readonly Blc.Blc _blc;
 
@@ -22,7 +34,11 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
 
         public IVodkaDto GetVodka(int id)
         {
+            
             var vodka = _blc.GetVodka(id);
+
+            if (vodka == null)
+                return null;
 
             return new VodkaDto
             {
@@ -90,14 +106,14 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             }).ToList();
         }
 
-        public bool Validate(IVodkaDto vodka)
+        public (bool IsSuccess, string Message) Validate(IVodkaDto vodka)
         {
             if (string.IsNullOrWhiteSpace(vodka.Name))
-                return false;
+                return (false, "Vodka name is required.");
             if (vodka.ProducerId == 0)
-                return false;
+                return (false, "To add vodka you must specify its producer.");
 
-            return true;
+            return (true, "Success");
         }
     }
 }

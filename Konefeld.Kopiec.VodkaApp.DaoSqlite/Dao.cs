@@ -40,14 +40,14 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
         {
             var vodka = _context.Vodkas.FirstOrDefault(v => v.Id == id);
 
-            return vodka ?? throw new NullReferenceException("Vodka with given ID does not exist");
+            return vodka;
         }
 
         public IProducer GetProducer(int id)
         {
             var producer = _context.Producers.FirstOrDefault(p => p.Id == id);
 
-            return producer ?? throw new NullReferenceException("Producer with given ID does not exist.");
+            return producer;
         }
 
         public IEnumerable<IVodka> GetAllVodkas()

@@ -6,7 +6,7 @@
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects
 @inject NavigationManager Navigation
-@inject VodkaService VodkaService
+@* @inject VodkaService VodkaService *@
 @inject IJSRuntime JsRuntime
 @page "/"
 
@@ -238,21 +238,22 @@ else
 
     protected override void OnInitialized()
     {
-        _vodkas = VodkaService.GetVodkas();
-        _producers = VodkaService.GetProducersData();
+        // _vodkas = VodkaService.GetVodkas();
+        // _producers = VodkaService.GetProducersData();
     }
 
     private async Task AddVodka()
     {
-        if (!VodkaService.Validate(_newVodka))
-        {
-            await Popup("Validation for new vodka object failed. Please double-check inputted data.");
-            return;
-        }
+        // var validationResult = VodkaService.Validate(_newVodka);
+        // if (!validationResult.IsSuccess)
+        // {
+        //     await Popup(validationResult.Message);
+        //     return;
+        // }
 
-        var id = VodkaService.CreateVodka(_newVodka);
-        _newVodka = new VodkaDto();
-        _vodkas = VodkaService.GetVodkas();
+        // var id = VodkaService.CreateVodka(_newVodka);
+        // _newVodka = new VodkaDto();
+        // _vodkas = VodkaService.GetVodkas();
     }
 
     private async Task Popup(string message)
@@ -267,12 +268,12 @@ else
         if (!confirmed)
             return;
 
-        var success = VodkaService.DeleteVodka(id);
+        // var success = VodkaService.DeleteVodka(id);
 
-        if (!success)
-            await Popup("Failed to delete vodka. Please try again later.");
+        // if (!success)
+        //     await Popup("Failed to delete vodka. Please try again later.");
 
-        _vodkas = VodkaService.GetVodkas();
+        // _vodkas = VodkaService.GetVodkas();
     }
 
     private async Task<bool> ConfirmPopup()
@@ -287,12 +288,12 @@ else
 
     private void ApplyFilters()
     {
-        _vodkas = VodkaService.GetFilteredVodkas(_filter);
+        // _vodkas = VodkaService.GetFilteredVodkas(_filter);
     }
 
     private void ClearFilters()
     {
         _filter = new VodkaFilter();
-        _vodkas = VodkaService.GetVodkas();
+        // _vodkas = VodkaService.GetVodkas();
     }
 }

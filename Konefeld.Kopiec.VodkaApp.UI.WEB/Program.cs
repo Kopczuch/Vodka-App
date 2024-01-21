@@ -11,8 +11,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
-            builder.Services.AddSingleton<VodkaService>();
+            builder.Services.AddSingleton<IVodkaService, VodkaService>();
             builder.Services.AddSingleton<ProducerService>();
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
@@ -29,6 +30,12 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapBlazorHub();
+            });
 
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");

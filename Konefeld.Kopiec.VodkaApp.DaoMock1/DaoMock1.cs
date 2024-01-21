@@ -116,14 +116,14 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
         {
             var vodka = _vodkas.FirstOrDefault(v => v.Id == id);
 
-            return vodka ?? throw new NullReferenceException("Vodka with given ID does not exist");
+            return vodka;
         }
 
         public IProducer GetProducer(int id)
         {
             var producer = _producers.FirstOrDefault(p => p.Id == id);
 
-            return producer ?? throw new NullReferenceException("Producer with given ID does not exist");
+            return producer;
         }
 
 
