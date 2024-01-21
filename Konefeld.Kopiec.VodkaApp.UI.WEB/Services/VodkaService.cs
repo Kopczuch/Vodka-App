@@ -24,6 +24,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
         {
             var vodka = _blc.GetVodka(id);
 
+            if (vodka == null)
+                return null;
+
             return new VodkaDto
             {
                 Name = vodka.Name,

@@ -116,14 +116,14 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
         {
             var vodka = _vodkas.FirstOrDefault(v => v.Id == id);
 
-            return vodka ?? throw new NullReferenceException("Vodka with given ID does not exist");
+            return vodka;
         }
 
         public IProducer GetProducer(int id)
         {
             var producer = _producers.FirstOrDefault(p => p.Id == id);
 
-            return producer ?? throw new NullReferenceException("Producer with given ID does not exist");
+            return producer;
         }
 
 
@@ -217,12 +217,19 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
 
         public bool DeleteProducer(int id)
         {
-            var producersToDelete = _producers.FirstOrDefault(p =>p.Id == id);
+            var producerToDelete = _producers.FirstOrDefault(p =>p.Id == id);
 
-            if (producersToDelete == null)
+            if (producerToDelete == null)
                 return false;
 
-            _producers.Remove(producersToDelete);
+            var vodkasFromProducer = _vodkas.Where(v => v.Producer.Id == producerToDelete.Id).ToList();
+
+            foreach (var vodka in vodkasFromProducer)
+            {
+                _vodkas.Remove(vodka);
+            }
+                
+            _producers.Remove(producerToDelete);
             return true;
         }
 
