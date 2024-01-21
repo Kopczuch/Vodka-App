@@ -23,6 +23,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
         {
             var producer = _blc.GetProducer(id);
 
+            if (producer == null)
+                return null;
+
             return new ProducerDto
             {
                 Name = producer.Name,

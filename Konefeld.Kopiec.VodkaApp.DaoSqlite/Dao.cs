@@ -1,5 +1,4 @@
-﻿using Konefeld.Kopiec.VodkaApp.Core;
-using Konefeld.Kopiec.VodkaApp.DaoSqlite.BO;
+﻿using Konefeld.Kopiec.VodkaApp.DaoSqlite.BO;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,7 +51,9 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
 
         public IEnumerable<IVodka> GetAllVodkas()
         {
-            return _context.Vodkas
+            var vodkas = new List<IVodka>();
+
+            vodkas.AddRange(_context.Vodkas
                 .Include(v => v.ProducerImpl)
                 .Select(v => new Vodka
                 {
@@ -64,12 +65,15 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
                     VolumeInLiters = v.VolumeInLiters,
                     Price = v.Price,
                     FlavourProfile = v.FlavourProfile
-                }).ToList();
+                }).ToList());
+
+            return vodkas;
+
         }
 
         public IEnumerable<IVodka> GetFilteredVodkas(IVodkaFilter filter)
         {
-            var vodkas = _context.Vodkas.ToList();
+            var vodkas = GetAllVodkas().ToList();
 
             var filteredVodkas = vodkas.Where(vodka =>
                 (string.IsNullOrWhiteSpace(filter.SearchTerm) ||
@@ -87,12 +91,14 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
 
         public IEnumerable<IProducer> GetAllProducers()
         {
-            return _context.Producers.ToList();
+            var producers = new List<IProducer>();
+            producers.AddRange(_context.Producers.ToList());
+            return producers;
         }
 
         public IEnumerable<IProducer> GetFilteredProducers(IProducerFilter filter)
         {
-            var producers = _context.Producers.ToList();
+            var producers = GetAllProducers().ToList();
 
             var filteredProducers = producers.Where(producer =>
                 (string.IsNullOrWhiteSpace(filter.SearchTerm) ||
@@ -165,6 +171,13 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
 
             if (producerToDelete == null)
                 return false;
+
+            var vodkasFromProducer = _context.Vodkas
+                .Include(v => v.ProducerImpl)
+                .Where(v => v.ProducerImpl.Id == producerToDelete.Id).ToList();
+
+            if (vodkasFromProducer.Any())
+                _context.Vodkas.RemoveRange(vodkasFromProducer);
 
             _context.Producers.Remove(producerToDelete);
             _context.SaveChanges();

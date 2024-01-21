@@ -217,12 +217,19 @@ namespace Konefeld.Kopiec.VodkaApp.DaoMock1
 
         public bool DeleteProducer(int id)
         {
-            var producersToDelete = _producers.FirstOrDefault(p =>p.Id == id);
+            var producerToDelete = _producers.FirstOrDefault(p =>p.Id == id);
 
-            if (producersToDelete == null)
+            if (producerToDelete == null)
                 return false;
 
-            _producers.Remove(producersToDelete);
+            var vodkasFromProducer = _vodkas.Where(v => v.Producer.Id == producerToDelete.Id).ToList();
+
+            foreach (var vodka in vodkasFromProducer)
+            {
+                _vodkas.Remove(vodka);
+            }
+                
+            _producers.Remove(producerToDelete);
             return true;
         }
 
