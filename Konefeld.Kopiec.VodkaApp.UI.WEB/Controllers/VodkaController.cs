@@ -1,5 +1,4 @@
-﻿using Konefeld.Kopiec.VodkaApp.Interfaces;
-using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto;
+﻿using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +46,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] IVodkaDto updatedVodka)
+        public IActionResult Update([FromRoute] int id, [FromBody] VodkaDto updatedVodka)
         {
             return Ok(_vodkaService.UpdateVodka(id, updatedVodka));
         }

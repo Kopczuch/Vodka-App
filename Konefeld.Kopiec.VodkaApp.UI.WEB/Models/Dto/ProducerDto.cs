@@ -7,6 +7,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
     {
         public ProducerDto()
         {
+            Name = string.Empty;
+            Description = string.Empty;
+            CountryOfOrigin = string.Empty;
         }
 
         public ProducerDto(string name, string description, string countryOfOrigin,

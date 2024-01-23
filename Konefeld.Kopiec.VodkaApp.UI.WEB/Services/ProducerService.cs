@@ -5,7 +5,18 @@ using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels;
 
 namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
 {
-    public class ProducerService
+    public interface IProducerService
+    {
+        int CreateProducer(IProducerDto newProducer);
+        ProducerDto GetProducer(int id);
+        IList<ProducerViewModel> GetProducers();
+        IList<ProducerViewModel> GetFilteredProducers(IProducerFilter filter);
+        bool UpdateProducer(int id, IProducerDto updatedProducer);
+        bool DeleteProducer(int id);
+        (bool IsSuccess, string Message) Validate(IProducerDto producer);
+    }
+
+    public class ProducerService : IProducerService
     {
         private readonly Blc.Blc _blc;
 
@@ -76,16 +87,18 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
             return _blc.DeleteProducer(id);
         }
 
-        public bool Validate(IProducerDto producer)
+        public (bool IsSuccess, string Message) Validate(IProducerDto producer)
         {
             if (string.IsNullOrWhiteSpace(producer.Name))
-                return false;
+                return (false, "Producer's name is required.");
             if (string.IsNullOrWhiteSpace(producer.Description))
-                return false;
+                return (false, "Producer's description is required.");
+            if (producer.Description.Length > 500)
+                return (false, "Description exceeds the maximum length of 500 characters.");
             if (string.IsNullOrEmpty(producer.CountryOfOrigin))
-                return false;
+                return (false, "Producer's country of origin must be specified.");
 
-            return true;
+            return (true, "Success");
         }
     }
 }

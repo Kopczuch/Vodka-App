@@ -12,9 +12,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSingleton<IVodkaService, VodkaService>();
-            builder.Services.AddSingleton<ProducerService>();
+            builder.Services.AddSingleton<IProducerService, ProducerService>();
             builder.Services.AddControllers();
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7061/") });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5000/") });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

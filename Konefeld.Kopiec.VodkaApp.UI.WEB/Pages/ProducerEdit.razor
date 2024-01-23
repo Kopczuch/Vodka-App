@@ -1,10 +1,10 @@
-﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
+﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 @using Konefeld.Kopiec.VodkaApp.Interfaces
-@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 @using Konefeld.Kopiec.VodkaApp.Core
-@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
 @inject NavigationManager Navigation
-@inject ProducerService ProducerService
+@inject HttpClient HttpClient
+@inject IJSRuntime JsRuntime
+
 @page "/producers/{Id:int}"
 
 <PageTitle>Edit</PageTitle>
@@ -66,17 +66,39 @@
 
     private IProducerDto _updatedProducer = new ProducerDto();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _updatedProducer = ProducerService.GetProducer(Id);
+        await LoadProducer();
     }
 
-    private void UpdateProducer()
+    private async Task LoadProducer()
     {
-        var success = ProducerService.UpdateProducer(Id, _updatedProducer);
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<IProducerDto>($"api/producers/{Id}");
 
-        if (success)
-            Navigation.NavigateTo("/producers");
+            if (response != null)
+            {
+                _updatedProducer = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task UpdateProducer()
+    {
+        var response = await HttpClient.PutAsJsonAsync($"api/producers/update/{Id}", _updatedProducer);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        await JsRuntime.InvokeVoidAsync("alert", "Could not update producer. Please try again later.");
 
     }
 

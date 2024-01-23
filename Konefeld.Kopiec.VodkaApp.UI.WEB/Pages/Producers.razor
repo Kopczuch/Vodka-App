@@ -1,16 +1,14 @@
-﻿@page "/producers"
-@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels
-@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
+﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels
 @using Konefeld.Kopiec.VodkaApp.Interfaces
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 @using Konefeld.Kopiec.VodkaApp.Core
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects
-@inject ProducerService ProducerService
 @inject NavigationManager Navigation
+@inject HttpClient HttpClient
 @inject IJSRuntime JsRuntime
+@page "/producers"
 
 <PageTitle>Producers</PageTitle>
-
 <h1>Producers</h1>
 
 <form @onsubmit="AddProducer">
@@ -177,22 +175,38 @@ else
     private IProducerDto _newProducer = new ProducerDto();
     private IProducerFilter _filter = new ProducerFilter();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _producers = ProducerService.GetProducers();
+        await LoadProducers();
+    }
+
+    private async Task LoadProducers()
+    {
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<IList<ProducerViewModel>>("api/producers");
+
+            if (response != null)
+            {
+                _producers = response.OrderByDescending(p => p.Id).ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private async Task AddProducer()
     {
-        if (!ProducerService.Validate(_newProducer))
-        {
-            await Popup("Validation for new producer object failed. Please double-check inputted data.");
-            return;
-        }
+        var response = await HttpClient.PostAsJsonAsync("api/producers/create", _newProducer);
 
-        var id = ProducerService.CreateProducer(_newProducer);
-        _newProducer = new ProducerDto();
-        _producers = ProducerService.GetProducers();
+        if (!response.IsSuccessStatusCode)
+            await Popup(await response.Content.ReadAsStringAsync());
+        else
+            _newProducer = new ProducerDto();
+
+        await LoadProducers();
     }
 
     private async Task DeleteProducer(int id)
@@ -202,8 +216,12 @@ else
         if (!confirmed)
             return;
 
-        var success = ProducerService.DeleteProducer(id);
-        _producers = ProducerService.GetProducers();
+        var result = await HttpClient.DeleteAsync($"api/producers/delete/{id}");
+
+        if (!result.IsSuccessStatusCode)
+            await Popup("Failed to delete producer. Please try again later.");
+
+        await LoadProducers();
     }
 
     private void GoToEditProducer(int id)
@@ -211,15 +229,24 @@ else
         Navigation.NavigateTo($"/producers/{id}");
     }
 
-    private void ApplyFilters()
+    private async Task ApplyFilters()
     {
-        _producers = ProducerService.GetFilteredProducers(_filter);
+        var response = await HttpClient.PostAsJsonAsync("api/producers/filter", _filter);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            await Popup(await response.Content.ReadAsStringAsync());
+            return;
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<IList<ProducerViewModel>>();
+        _producers = result.OrderByDescending(p => p.Id).ToList();
     }
 
-    private void ClearFilters()
+    private async Task ClearFilters()
     {
         _filter = new ProducerFilter();
-        _producers = ProducerService.GetProducers();
+        await LoadProducers();
     }
 
     private async Task Popup(string message)

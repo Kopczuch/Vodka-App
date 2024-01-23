@@ -1,5 +1,4 @@
-﻿using Konefeld.Kopiec.VodkaApp.Core;
-using Konefeld.Kopiec.VodkaApp.Interfaces;
+﻿using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Models;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto;
 using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels;
@@ -109,7 +108,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Services
         public (bool IsSuccess, string Message) Validate(IVodkaDto vodka)
         {
             if (string.IsNullOrWhiteSpace(vodka.Name))
-                return (false, "Vodka name is required.");
+                return (false, "Vodka's name is required.");
             if (vodka.ProducerId == 0)
                 return (false, "To add vodka you must specify its producer.");
 

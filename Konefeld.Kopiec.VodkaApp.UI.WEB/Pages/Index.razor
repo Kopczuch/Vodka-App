@@ -4,10 +4,9 @@
 @using Konefeld.Kopiec.VodkaApp.Core
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects
-@using System.Text.Json
 @inject NavigationManager Navigation
-@inject IJSRuntime JsRuntime
 @inject HttpClient HttpClient
+@inject IJSRuntime JsRuntime
 @page "/"
 
 <PageTitle>Vodkas</PageTitle>
@@ -50,7 +49,7 @@
 
             <div class="col-xs-12 col-md-4">
                 <div class="form-group">
-                    <label for="price">*Price:</label>
+                    <label for="price">*Price (zł):</label>
                     <input id="price" class="form-control" @bind="_newVodka.Price" type="number" min="0" step="0.01" required/>
                 </div>
             </div>
@@ -171,7 +170,7 @@
             <th>Flavour profile</th>
             <th>Volume</th>
             <th>Alcohol</th>
-            <th>Price</th>
+            <th>Price (zł)</th>
             <th>Producer</th>
             <th></th>
             <th></th>
@@ -213,7 +212,7 @@ else
                 <th>Flavour profile</th>
                 <th>Volume in liters</th>
                 <th>Alcohol percentage</th>
-                <th>Price</th>
+                <th>Price (zł)</th>
                 <th>Producer</th>
                 <th></th>
                 <th></th>
@@ -250,7 +249,7 @@ else
 
             if (response != null)
             {
-                _vodkas = response;
+                _vodkas = response.OrderByDescending(v => v.Id).ToList();
             }
         }
         catch (Exception ex)
@@ -267,7 +266,7 @@ else
 
             if (response != null)
             {
-                _producers = response;
+                _producers = response.OrderBy(p => p.Name).ToList();
             }
         }
         catch (Exception ex)
@@ -320,7 +319,6 @@ else
 
     private async Task ApplyFilters()
     {
-        var content = JsonSerializer.Serialize(_filter);
         var response = await HttpClient.PostAsJsonAsync("api/vodkas/filter", _filter);
 
         if (!response.IsSuccessStatusCode)
@@ -329,7 +327,8 @@ else
             return;
         }
 
-        _vodkas = await response.Content.ReadFromJsonAsync<IList<VodkaViewModel>>();
+        var result = await response.Content.ReadFromJsonAsync<IList<VodkaViewModel>>();
+        _vodkas = result.OrderByDescending(v => v.Id).ToList();
 
     }
 

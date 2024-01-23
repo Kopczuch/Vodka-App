@@ -1,7 +1,7 @@
-﻿@using Konefeld.Kopiec.VodkaApp.Interfaces
-@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
-@using Konefeld.Kopiec.VodkaApp.Core
+﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
+@using Konefeld.Kopiec.VodkaApp.Interfaces
+@using Konefeld.Kopiec.VodkaApp.Core
 @inject NavigationManager Navigation
 @inject HttpClient HttpClient
 @inject IJSRuntime JsRuntime
@@ -44,7 +44,7 @@
 
             <div class="w-50 mb-3">
                 <div class="form-group">
-                    <label for="price">*Price:</label>
+                    <label for="price">*Price (zł):</label>
                     <input id="price" class="form-control" @bind="_updatedVodka.Price" type="number" min="0" step="0.01" required/>
                 </div>
             </div>
@@ -102,7 +102,7 @@
     {
         try
         {
-            var response = await HttpClient.GetFromJsonAsync<IVodkaDto>($"api/vodkas/{Id}");
+            var response = await HttpClient.GetFromJsonAsync<VodkaDto>($"api/vodkas/{Id}");
 
             if (response != null)
             {

@@ -68,7 +68,6 @@ namespace Konefeld.Kopiec.VodkaApp.DaoSqlite
                 }).ToList());
 
             return vodkas;
-
         }
 
         public IEnumerable<IVodka> GetFilteredVodkas(IVodkaFilter filter)
