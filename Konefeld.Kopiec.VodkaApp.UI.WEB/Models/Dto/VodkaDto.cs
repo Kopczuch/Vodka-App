@@ -7,6 +7,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
     {
         public VodkaDto()
         {
+            Name = string.Empty;
         }
 
         public VodkaDto(string name, int producerId, VodkaType vodkaType, double alcoholPercentage,

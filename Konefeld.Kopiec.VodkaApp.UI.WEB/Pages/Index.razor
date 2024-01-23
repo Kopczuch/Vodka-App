@@ -1,13 +1,13 @@
-﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
-@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels
+﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.ViewModels
 @using Konefeld.Kopiec.VodkaApp.Interfaces
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 @using Konefeld.Kopiec.VodkaApp.Core
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.FilterObjects
+@using System.Text.Json
 @inject NavigationManager Navigation
-@* @inject VodkaService VodkaService *@
 @inject IJSRuntime JsRuntime
+@inject HttpClient HttpClient
 @page "/"
 
 <PageTitle>Vodkas</PageTitle>
@@ -236,24 +236,56 @@ else
 
     private IVodkaFilter _filter = new VodkaFilter();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // _vodkas = VodkaService.GetVodkas();
-        // _producers = VodkaService.GetProducersData();
+        await LoadProducerInfo();
+        await LoadVodkas();
+    }
+
+    private async Task LoadVodkas()
+    {
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<IList<VodkaViewModel>>("api/vodkas");
+
+            if (response != null)
+            {
+                _vodkas = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task LoadProducerInfo()
+    {
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<IList<ProducerData>>("api/vodkas/producers");
+
+            if (response != null)
+            {
+                _producers = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private async Task AddVodka()
     {
-        // var validationResult = VodkaService.Validate(_newVodka);
-        // if (!validationResult.IsSuccess)
-        // {
-        //     await Popup(validationResult.Message);
-        //     return;
-        // }
+        var response = await HttpClient.PostAsJsonAsync("api/vodkas/create", _newVodka);
 
-        // var id = VodkaService.CreateVodka(_newVodka);
-        // _newVodka = new VodkaDto();
-        // _vodkas = VodkaService.GetVodkas();
+        if (!response.IsSuccessStatusCode)
+            await Popup(await response.Content.ReadAsStringAsync());
+        else
+            _newVodka = new VodkaDto();
+
+        await LoadVodkas();
     }
 
     private async Task Popup(string message)
@@ -268,12 +300,12 @@ else
         if (!confirmed)
             return;
 
-        // var success = VodkaService.DeleteVodka(id);
+        var result = await HttpClient.DeleteAsync($"api/vodkas/delete/{id}");
 
-        // if (!success)
-        //     await Popup("Failed to delete vodka. Please try again later.");
+        if (!result.IsSuccessStatusCode)
+            await Popup("Failed to delete vodka. Please try again later.");
 
-        // _vodkas = VodkaService.GetVodkas();
+        await LoadVodkas();
     }
 
     private async Task<bool> ConfirmPopup()
@@ -286,14 +318,24 @@ else
         Navigation.NavigateTo($"/vodkas/{id}");
     }
 
-    private void ApplyFilters()
+    private async Task ApplyFilters()
     {
-        // _vodkas = VodkaService.GetFilteredVodkas(_filter);
+        var content = JsonSerializer.Serialize(_filter);
+        var response = await HttpClient.PostAsJsonAsync("api/vodkas/filter", _filter);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            await Popup(await response.Content.ReadAsStringAsync());
+            return;
+        }
+
+        _vodkas = await response.Content.ReadFromJsonAsync<IList<VodkaViewModel>>();
+
     }
 
-    private void ClearFilters()
+    private async Task ClearFilters()
     {
         _filter = new VodkaFilter();
-        // _vodkas = VodkaService.GetVodkas();
+        await LoadVodkas();
     }
 }

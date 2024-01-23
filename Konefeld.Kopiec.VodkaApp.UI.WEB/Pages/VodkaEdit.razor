@@ -1,10 +1,10 @@
-﻿@using Konefeld.Kopiec.VodkaApp.UI.WEB.Services
-@using Konefeld.Kopiec.VodkaApp.Interfaces
+﻿@using Konefeld.Kopiec.VodkaApp.Interfaces
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models.Dto
 @using Konefeld.Kopiec.VodkaApp.Core
 @using Konefeld.Kopiec.VodkaApp.UI.WEB.Models
 @inject NavigationManager Navigation
-@inject VodkaService VodkaService
+@inject HttpClient HttpClient
+@inject IJSRuntime JsRuntime
 @page "/vodkas/{Id:int}"
 
 <PageTitle>Edit</PageTitle>
@@ -92,19 +92,57 @@
     private IVodkaDto _updatedVodka = new VodkaDto();
     private IList<ProducerData> _producers = new List<ProducerData>();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _updatedVodka = VodkaService.GetVodka(Id);
-        _producers = VodkaService.GetProducersData();
+        await LoadVodka();
+        await LoadProducerInfo();
     }
 
-    private void UpdateVodka()
+    private async Task LoadVodka()
     {
-        var success = VodkaService.UpdateVodka(Id, _updatedVodka);
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<IVodkaDto>($"api/vodkas/{Id}");
 
-        if (success)
+            if (response != null)
+            {
+                _updatedVodka = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task LoadProducerInfo()
+    {
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<IList<ProducerData>>("api/vodkas/producers");
+
+            if (response != null)
+            {
+                _producers = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task UpdateVodka()
+    {
+        var response = await HttpClient.PutAsJsonAsync($"api/vodkas/update/{Id}", _updatedVodka);
+
+        if (response.IsSuccessStatusCode)
+        {
             Navigation.NavigateTo("/");
+            return;
+        }
 
+        await JsRuntime.InvokeVoidAsync("alert", "Could not update vodka. Please try again later.");
     }
 
     private void Cancel()

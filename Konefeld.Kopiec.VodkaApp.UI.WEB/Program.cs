@@ -14,7 +14,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB
             builder.Services.AddSingleton<IVodkaService, VodkaService>();
             builder.Services.AddSingleton<ProducerService>();
             builder.Services.AddControllers();
-
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7061/") });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -35,10 +35,8 @@ namespace Konefeld.Kopiec.VodkaApp.UI.WEB
             {
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
+                app.MapFallbackToPage("/_Host");
             });
-
-            app.MapBlazorHub();
-            app.MapFallbackToPage("/_Host");
 
             app.Run();
         }
