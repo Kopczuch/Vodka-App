@@ -1,6 +1,4 @@
-﻿using Konefeld.Kopiec.VodkaApp.Core;
-
-namespace Konefeld.Kopiec.VodkaApp.Interfaces
+﻿namespace Konefeld.Kopiec.VodkaApp.Interfaces
 {
     public interface IVodkaFilter
     {

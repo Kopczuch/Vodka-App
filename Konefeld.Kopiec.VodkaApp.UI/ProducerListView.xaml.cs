@@ -2,6 +2,7 @@
 using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Konefeld.Kopiec.VodkaApp.UI.Dto;
+using Konefeld.Kopiec.VodkaApp.UI.Models;
 using Konefeld.Kopiec.VodkaApp.UI.ViewModels;
 
 namespace Konefeld.Kopiec.VodkaApp.UI
@@ -23,9 +24,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI
             LvProducers.ItemsSource = MapToViewModel(_blc.GetProducers());
         }
 
-        private IEnumerable<ProducerViewModel> MapToViewModel(IEnumerable<IProducer> producers)
+        private IEnumerable<ProducerModel> MapToViewModel(IEnumerable<IProducer> producers)
         {
-            return producers.Select(p => new ProducerViewModel
+            return producers.Select(p => new ProducerModel
             {
                 Id = p.Id,
                 Name = p.Name,

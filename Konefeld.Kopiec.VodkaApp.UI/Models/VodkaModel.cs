@@ -1,6 +1,6 @@
-﻿namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
+﻿namespace Konefeld.Kopiec.VodkaApp.UI.Models
 {
-    public class VodkaViewModel
+    public class VodkaModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
