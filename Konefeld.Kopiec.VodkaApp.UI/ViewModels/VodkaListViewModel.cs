@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Konefeld.Kopiec.VodkaApp.UI.Dto;
 using Konefeld.Kopiec.VodkaApp.UI.Models;
+using Konefeld.Kopiec.VodkaApp.UI.FilterObjects;
 
 namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
 {
@@ -13,48 +14,64 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
         public VodkaListViewModel()
         {
             _blc = Blc.Blc.Instance;
+
+            Vodkas = new ObservableCollection<VodkaModel>();
+            NewVodka = new VodkaDto();
+            Filter = new VodkaFilter();
+
             LoadVodkas();
             LoadProducersData();
         }
+        public ObservableCollection<VodkaModel> Vodkas { get; set; }
 
-        private ObservableCollection<VodkaModel> _vodkas;
-        public ObservableCollection<VodkaModel> Vodkas
+        public IList<ProducerData> Producers { get; set; }
+        public IList<ProducerData> FilterProducers { get; set; }
+
+        public IVodkaDto NewVodka { get; set; }
+
+        public IVodkaFilter Filter { get; set; }
+
+        public void ApplyFilter()
         {
-            get => _vodkas;
-            set
+            Vodkas.Clear();
+
+            var vodkas = MapToViewModel(_blc.GetFilteredVodkas(Filter));
+
+            foreach (var vodka in vodkas)
             {
-                if (_vodkas == value) return;
-                _vodkas = value;
-                OnPropertyChanged(nameof(Vodkas));
+                Vodkas.Add(vodka);
             }
         }
 
-        public IList<ProducerData> Producers { get; set; }
-
-        private IVodkaDto _newVodka;
-        public IVodkaDto NewVodka
+        public void ClearFilters()
         {
-            get => _newVodka;
-            set
-            {
-                if (_newVodka == value) return;
-                _newVodka = value;
-                OnPropertyChanged(nameof(NewVodka));
-            }
+            LoadVodkas();
+            Filter = new VodkaFilter();
+            OnPropertyChanged(nameof(Filter));
         }
 
         private void LoadVodkas()
         {
-            Vodkas = new ObservableCollection<VodkaModel>(MapToViewModel(_blc.GetVodkas()));
+            Vodkas.Clear();
+            var vodkas = MapToViewModel(_blc.GetVodkas());
+            foreach (var vodka in vodkas)
+            {
+                Vodkas.Add(vodka);
+            }
         }
 
         private void LoadProducersData()
         {
-            Producers = _blc.GetProducers().Select(p => new ProducerData
+            var producers = _blc.GetProducers().Select(p => new ProducerData
             {
                 Id = p.Id,
                 Name = p.Name
-            }).ToList();
+            }).OrderBy(p => p.Name).ToList();
+            Producers = producers;
+            FilterProducers = new List<ProducerData>(producers);
+
+            var emptyProducer = new ProducerData { Id = 0, Name = ""};
+            FilterProducers.Insert(0, emptyProducer);
         }
 
         private IEnumerable<VodkaModel> MapToViewModel(IEnumerable<IVodka> vodkas)
@@ -69,12 +86,18 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
                 VolumeInLiters = v.VolumeInLiters,
                 Price = v.Price,
                 FlavourProfile = v.FlavourProfile
-            });
+            }).OrderByDescending(v => v.Id);
         }
 
-        private void CreateVodka()
+        public void CreateVodka()
         {
             var id = _blc.CreateVodka(NewVodka);
+            LoadVodkas();
+        }
+
+        public void DeleteVodka(int id)
+        {
+            var result = _blc.DeleteVodka(id);
             LoadVodkas();
         }
 
@@ -84,5 +107,6 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }

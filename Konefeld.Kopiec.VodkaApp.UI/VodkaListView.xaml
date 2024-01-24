@@ -5,57 +5,126 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Konefeld.Kopiec.VodkaApp.UI"
              xmlns:viewModels="clr-namespace:Konefeld.Kopiec.VodkaApp.UI.ViewModels"
+             xmlns:core="clr-namespace:Konefeld.Kopiec.VodkaApp.Core;assembly=Konefeld.Kopiec.VodkaApp.Core"
+             xmlns:System="clr-namespace:System;assembly=System.Runtime"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
 
     <UserControl.DataContext>
         <viewModels:VodkaListViewModel />
     </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="VodkaTypeValues" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="core:VodkaType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid Margin="15">
-        <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+        <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>-->
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--Adding the Vodka Form-->
-        <StackPanel Margin="10">
-            <Label Content="Add New Vodka" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-            <TextBox x:Name="NameTextBox" Text="{Binding NewVodka.Name}" Margin="0,0,0,5" />
-            <TextBox x:Name="FlavourProfileTextBox" Text="{Binding NewVodka.FlavourProfile}" Margin="0,0,0,5" />
-            <TextBox x:Name="VolumeTextBox" Text="{Binding NewVodka.VolumeInLiters}" Margin="0,0,0,5" />
-            <TextBox x:Name="AlcoholPercentageTextBox" Text="{Binding NewVodka.AlcoholPercentage}" Margin="0,0,0,5" />
-            <TextBox x:Name="PriceTextBox" Text="{Binding NewVodka.Price}" Margin="0,0,0,5" />
-            <ComboBox x:Name="TypeComboBox" ItemsSource="{Binding VodkaTypes}" Margin="0,0,0,5" />
-            <ComboBox x:Name="ProducerComboBox" ItemsSource="{Binding Producers}" DisplayMemberPath="Name" Margin="0,0,0,5" />
+        <Label Grid.Column="0" Grid.Row="0" FontSize="16" FontWeight="Bold">Add New Vodka:</Label>
+        <Label Grid.Column="0" Grid.Row="1">Name*:</Label>
+        <Label Grid.Column="1" Grid.Row="1">Flavor Profile:</Label>
+        <Label Grid.Column="2" Grid.Row="1">Volume in liters*:</Label>
+        <Label Grid.Column="3" Grid.Row="1">Alcohol %*:</Label>
+        <Label Grid.Column="4" Grid.Row="1">Price (zł)*:</Label>
+        <Label Grid.Column="5" Grid.Row="1">Type*:</Label>
+        <Label Grid.Column="6" Grid.Row="1">Producer*:</Label>
 
-            <Button Content="Add Vodka" Command="{Binding AddVodkaCommand}" Margin="0,10,0,0"/>
-        </StackPanel>
+        <Label Grid.Column="0" Grid.Row="4" FontSize="16" FontWeight="Bold">Filter Vodkas:</Label>
+        <Label Grid.Column="0" Grid.Row="5">Search term:</Label>
+        <Label Grid.Column="1" Grid.Row="5">Volume:</Label>
+        <Label Grid.Column="2" Grid.Row="5">Alcohol:</Label>
+        <Label Grid.Column="3" Grid.Row="5">Price lower bound:</Label>
+        <Label Grid.Column="4" Grid.Row="5">Price upper bound:</Label>
+        <Label Grid.Column="5" Grid.Row="5">Type:</Label>
+        <Label Grid.Column="6" Grid.Row="5">Producer:</Label>
+
+        <!--<Label Grid.Column="0" Grid.Row="14" FontSize="16" FontWeight="Bold">Vodkas</Label>-->
+
+        <!--Adding the Vodka Form-->
+        <TextBox Grid.Column="0" Grid.Row="2" x:Name="NameTextBox" Text="{Binding NewVodka.Name}" Margin="0,0,10,5" />
+        <TextBox Grid.Column="1" Grid.Row="2" x:Name="FlavourProfileTextBox" Text="{Binding NewVodka.FlavourProfile}" Margin="0,0,10,5" />
+        <TextBox Grid.Column="2" Grid.Row="2" x:Name="VolumeTextBox"
+                 Text="{Binding NewVodka.VolumeInLiters}"
+                 Margin="0,0,10,5"
+                 InputScope="Number"
+                 TextChanged="NumericInput" />
+        <TextBox Grid.Column="3" Grid.Row="2" x:Name="AlcoholPercentageTextBox"
+            Text="{Binding NewVodka.AlcoholPercentage}"
+            Margin="0,0,10,5"
+            InputScope="Number"
+            TextChanged="NumericInput">
+        </TextBox>
+        <TextBox Grid.Column="4" Grid.Row="2" x:Name="PriceTextBox"
+                 Text="{Binding NewVodka.Price}"
+                 Margin="0,0,10,5"
+                 InputScope="Number"
+                 TextChanged="NumericInput" />
+        <ComboBox Grid.Column="5" Grid.Row="2" SelectedItem="{Binding NewVodka.Type}" x:Name="TypeComboBox" Margin="0,0,10,5"
+                  ItemsSource="{Binding Source={StaticResource VodkaTypeValues}}" />
+        <ComboBox Grid.Column="6" Grid.Row="2" x:Name="ProducerComboBox"
+                  ItemsSource="{Binding Producers}"
+                  SelectedValue="{Binding NewVodka.ProducerId}"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Id"
+                  Margin="0,0,10,5" />
+
+        <Button Grid.Column="0" Grid.Row="3" Content="Add Vodka" IsEnabled="{Binding Path=ValidateVodka}" Click="AddVodka" Margin="0,10,10,0"/>
 
         <!--Adding the Vodka Filter-->
-        <StackPanel Margin="10" Grid.Row="1">
-            <Label Content="Filter Vodkas" FontSize="16" FontWeight="Bold" Margin="0,20,0,10"/>
-            <TextBox x:Name="SearchTextBox" Text="{Binding Filter.SearchTerm}" Margin="0,0,0,5" />
-            <TextBox x:Name="VolumeFilterTextBox" Text="{Binding Filter.Volume}" Margin="0,0,0,5" />
-            <TextBox x:Name="AlcoholPercentageFilterTextBox" Text="{Binding Filter.Alcohol}" Margin="0,0,0,5" />
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <TextBox x:Name="PriceLowerBoundTextBox" Text="{Binding Filter.PriceLowerBound}" Margin="0,0,10,0" />
-                <TextBox x:Name="PriceUpperBoundTextBox" Text="{Binding Filter.PriceUpperBound}" />
-            </StackPanel>
-            <ComboBox x:Name="TypeFilterComboBox" ItemsSource="{Binding VodkaTypes}" SelectedItem="{Binding Filter.Type}" Margin="0,0,0,5" />
-            <ComboBox x:Name="ProducerFilterComboBox" ItemsSource="{Binding Producers}" DisplayMemberPath="Name" SelectedItem="{Binding Filter.Producer}" Margin="0,0,0,5" />
+        <TextBox Grid.Column="0" Grid.Row="6" x:Name="SearchTextBox" Text="{Binding Filter.SearchTerm}" Margin="0,0,10,5" />
+        <TextBox Grid.Column="1" Grid.Row="6" x:Name="VolumeFilterTextBox" Text="{Binding Filter.Volume}" Margin="0,0,10,5" />
+        <TextBox Grid.Column="2" Grid.Row="6" x:Name="AlcoholPercentageFilterTextBox" Text="{Binding Filter.Alcohol}" Margin="0,0,10,5" />
+        <TextBox Grid.Column="3" Grid.Row="6" x:Name="PriceLowerBoundTextBox" Text="{Binding Filter.PriceLowerBound}" Margin="0,0,10,5" />
+        <TextBox Grid.Column="4" Grid.Row="6" x:Name="PriceUpperBoundTextBox" Text="{Binding Filter.PriceUpperBound}" Margin="0,0,10,5" />
+        <ComboBox Grid.Column="5" Grid.Row="6" x:Name="TypeFilterComboBox"
+                  SelectedValue="{Binding Filter.Type}"
+                  Margin="0,0,10,5">
+            <ComboBox.ItemsSource>
+                <CompositeCollection>
+                    <ComboBoxItem Content=""/>
+                    <CollectionContainer Collection="{Binding Source={StaticResource VodkaTypeValues}}" />
+                </CompositeCollection>
+            </ComboBox.ItemsSource>
+        </ComboBox>
 
-            <Button Content="Apply Filters" Command="{Binding ApplyFiltersCommand}" Margin="0,10,0,0"/>
-            <Button Content="Clear Filters" Command="{Binding ClearFiltersCommand}" Margin="0,10,0,0"/>
-        </StackPanel>
+        <ComboBox Grid.Column="6" Grid.Row="6" x:Name="ProducerFilterComboBox"
+                  ItemsSource="{Binding FilterProducers}"
+                  SelectedValue="{Binding Filter.ProducerId}"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Id"
+                  Margin="0,0,10,5" />
+
+
+        <Button Grid.Column="0" Grid.Row="7" Content="Apply Filters" Click="FilterVodkas" Margin="0,10,10,0" />
+        <Button Grid.Column="1" Grid.Row="7" Content="Clear Filters" Click="ClearFilters" Margin="0,10,10,0" />
+
 
         <!--Adding the Vodka List-->
-        <DataGrid Name="LvVodkas" IsReadOnly="True" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Vodkas}"
-          RowHeaderWidth="0" AlternationCount="2" AlternatingRowBackground="#FFEAEAEA" CanUserAddRows="False" Grid.Row="2" RenderTransformOrigin="0.5,0.5" Margin="10">
+        <DataGrid Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="7" Name="LvVodkas" IsReadOnly="True" AutoGenerateColumns="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Vodkas}"
+                  RowHeaderWidth="0" AlternationCount="2" AlternatingRowBackground="#FFEAEAEA" CanUserAddRows="False" RenderTransformOrigin="0.5,0.5" Margin="0, 20">
             <DataGrid.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -81,7 +150,7 @@
                 <DataGridTemplateColumn Header="">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Delete" Command="{Binding DataContext.DeleteVodkaCommand, ElementName=vodkaListView}" CommandParameter="{Binding Id}" />
+                            <Button Content="Delete" Click="DeleteVodka" CommandParameter="{Binding Id}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
