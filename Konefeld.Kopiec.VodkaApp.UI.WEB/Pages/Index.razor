@@ -88,28 +88,28 @@
 }
 
 <div class="row">
-    <div class="col-xl-2 mb-3">
+    <div class="col-lg-4 mb-3">
         <div class="form-group">
             <label for="search">Search:</label>
             <input id="search" class="form-control" @bind="_filter.SearchTerm" />
         </div>
     </div>
 
-    <div class="col-xl-2 mb-3">
+    <div class="col-lg-4 mb-3">
         <div class="form-group">
             <label for="volume">Volume in liters:</label>
             <input id="volume" class="form-control" @bind="_filter.Volume" type="number" min="0" step="0.05" />
         </div>
     </div>
     
-    <div class="col-xl-2 mb-3">
+    <div class="col-lg-4 mb-3">
         <div class="form-group">
             <label for="percentage">Alcohol %:</label>
             <input id="percentage" class="form-control" @bind="_filter.Alcohol" type="number" min="0" step="0.5" />
         </div>
     </div>
     
-    <div class="col-xl-2 mb-3">
+    <div class="col-lg-4 mb-3">
         <label for="priceRange">Price range:</label>
         <div id="priceRange" class="form-group row">
             <div class="col-6">
@@ -121,7 +121,7 @@
         </div>
     </div>
     
-    <div class="col-xl-2 mb-3">
+    <div class="col-lg-4 mb-3">
         <div class="form-group">
             <label for="filterType">Type:</label>
             <select id="filterType" class="form-control" @bind="_filter.Type">
@@ -137,7 +137,7 @@
         </div>
     </div>
 
-    <div class="col-xl-2 mb-3">
+    <div class="col-lg-4 mb-3">
         <div class="form-group">
             <label for="filterProducer">Producer:</label>
             <select id="filterProducer" class="form-control" @bind="_filter.ProducerId">

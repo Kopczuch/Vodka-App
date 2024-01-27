@@ -75,7 +75,7 @@
     {
         try
         {
-            var response = await HttpClient.GetFromJsonAsync<IProducerDto>($"api/producers/{Id}");
+            var response = await HttpClient.GetFromJsonAsync<ProducerDto>($"api/producers/{Id}");
 
             if (response != null)
             {
@@ -94,7 +94,7 @@
 
         if (response.IsSuccessStatusCode)
         {
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/producers");
             return;
         }
 
