@@ -1,5 +1,4 @@
 ﻿using Konefeld.Kopiec.VodkaApp.Interfaces;
-using Konefeld.Kopiec.VodkaApp.UI.ViewModels;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -10,7 +9,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI
     /// </summary>
     public partial class CreateVodkaWindow : Window
     {
-        readonly ObservableCollection<IProducer> _producersData = new ObservableCollection<IProducer>();
+        private readonly ObservableCollection<IProducer> _producersData = new ObservableCollection<IProducer>();
         public CreateVodkaWindow()
         {
             InitializeComponent();

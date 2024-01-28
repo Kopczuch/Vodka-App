@@ -5,6 +5,13 @@ namespace Konefeld.Kopiec.VodkaApp.UI.Dto
 {
     public class ProducerDto : IProducerDto
     {
+        public ProducerDto()
+        {
+            Name = string.Empty;
+            Description = string.Empty;
+            CountryOfOrigin = string.Empty;
+        }
+
         public ProducerDto(string name, string description, string countryOfOrigin,
             int establishmentYear, ProducerExportStatus producerExportStatus)
         {

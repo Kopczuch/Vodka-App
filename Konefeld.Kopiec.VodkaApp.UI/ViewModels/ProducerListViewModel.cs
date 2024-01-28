@@ -1,60 +1,74 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Data;
+using Konefeld.Kopiec.VodkaApp.Core;
+using Konefeld.Kopiec.VodkaApp.Interfaces;
+using Konefeld.Kopiec.VodkaApp.UI.Dto;
 
 namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
 {
     public class ProducerListViewModel : ViewModelBase
     {
         public ObservableCollection<ProducerViewModel> Producers { get; set; } = new ObservableCollection<ProducerViewModel>();
-        private readonly ListCollectionView _view;
 
         private readonly RelayCommand _filterDataCommand;
+        private readonly RelayCommand _clearFiltersCommand;
+
         public RelayCommand FilterDataCommand => _filterDataCommand;
-        public string FilterValue { get; set; }
+        public RelayCommand ClearFiltersCommand => _clearFiltersCommand;
+
+        public IProducerFilter FilterValue { get; set; }
+        public IList<string> FilterExportStatuses { get; set; }
+
 
         private readonly Blc.Blc _blc;
         public ProducerListViewModel()
         {
             _blc = Blc.Blc.Instance;
-            //try
-            //{
-            //    dataAccess = Singleton.Instance;
-            //}
-            //catch (NullReferenceException)
-            //{
-            //    Console.WriteLine("Creating DAO Failed!");
-            //}
-            OnPropertyChanged("Producers");
+            FilterValue = new ProducerFilter();
+
+            OnPropertyChanged(nameof(Producers));
             GetAllProducers();
 
-            _view = (ListCollectionView)CollectionViewSource.GetDefaultView(Producers);
             _filterDataCommand = new RelayCommand(param => FilterData());
-            _addProducerCommand = new RelayCommand(param => AddProducer(), param => CanAddProducer());
+            _clearFiltersCommand = new RelayCommand(param => ClearFilters());
             _saveProducerCommand = new RelayCommand(param => SaveProducer(), param => CanSaveProducer());
             _deleteProducerCommand = new RelayCommand(param => DeleteProducer(), param => CanDeleteProducer());
-            
-            UpdatedProducer = null;
-            SelectedProducer = UpdatedProducer;
         }
-        private void GetAllProducers()
+
+        public void GetAllProducers()
         {
+            Producers.Clear();
+
             var producers = _blc.GetProducers().ToList();
             foreach (var producer in producers)
             {
                 Producers.Add(new ProducerViewModel(producer));
             }
+
+            var enumValues = Enum.GetValues(typeof(ProducerExportStatus)).Cast<ProducerExportStatus>();
+            var prettyStrings = enumValues.Select(value => value.ToPrettyString());
+            FilterExportStatuses = new List<string>(prettyStrings);
+            FilterExportStatuses.Insert(0, "All");
         }
 
         private void FilterData()
         {
-            if (string.IsNullOrEmpty(FilterValue))
+            FilterValue.ExportStatus = string.Equals(FilterValue.ExportStatus, "All") ? string.Empty : FilterValue.ExportStatus.Replace(" ", "");
+
+            Producers.Clear();
+            var filteredProducers = _blc.GetFilteredProducers(FilterValue).ToList();
+
+            foreach (var producer in filteredProducers)
             {
-                _view.Filter = null;
+                Producers.Add(new ProducerViewModel(producer));
             }
-            else
-            {
-                _view.Filter = (p) => ((ProducerViewModel)p).Name.Contains(FilterValue);
-            }
+        }
+
+        private void ClearFilters()
+        {
+            GetAllProducers();
+            FilterValue = new ProducerFilter();
+            OnPropertyChanged(nameof(FilterValue));
         }
 
         private ProducerViewModel _updatedProducer;
@@ -85,14 +99,17 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
 
         private void SaveProducer()
         {
-            if (!Producers.Contains(UpdatedProducer))
-            {
-                Producers.Add(UpdatedProducer);
-                //_blc.UpdateProducer(UpdatedProducer.Producer);
-                UpdatedProducer = null;
-            }
+            var id = UpdatedProducer.Producer.Id;
+            var updatedProducer = new ProducerDto
+            (
+                UpdatedProducer.Producer.Name,
+                UpdatedProducer.Producer.Description,
+                UpdatedProducer.Producer.CountryOfOrigin,
+                UpdatedProducer.Producer.EstablishmentYear,
+                UpdatedProducer.Producer.ExportStatus
+            );
 
-            UpdatedProducer = null;
+            _blc.UpdateProducer(id, updatedProducer);
         }
 
         private bool CanSaveProducer()
@@ -100,32 +117,18 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
             return UpdatedProducer is { HasErrors: false };
         }
 
-        private readonly RelayCommand _addProducerCommand;
-        public RelayCommand AddProducerCommand => _addProducerCommand;
-
-        private void AddProducer()
-        {
-            //IProducer newProducer = dataAccess.AddProducer();
-            //EditedProducer = new ProducerViewModel(newProducer);
-            //EditedProducer.Validate();
-        }
-
-        private bool CanAddProducer()
-        {
-            return UpdatedProducer == null;
-        }
 
         private readonly RelayCommand _deleteProducerCommand;
         public RelayCommand DeleteProducerCommand => _deleteProducerCommand;
 
         private void DeleteProducer()
         {
-            if (Producers.Contains(SelectedProducer))
-            {
-                //_blc.DeleteProducer(SelectedProducer.Producer);
-                Producers.Remove(SelectedProducer);
-            }
+            if (!Producers.Contains(SelectedProducer))
+                return;
 
+            _blc.DeleteProducer(SelectedProducer.Producer.Id);
+            Producers.Remove(SelectedProducer);
+            SelectedProducer = null;
             UpdatedProducer = null;
         }
 

@@ -15,6 +15,12 @@
                 <x:Type TypeName="core:VodkaType"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <ObjectDataProvider x:Key="exportStatuses" MethodName="GetValues"
+                            ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="core:ProducerExportStatus"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
         <Style x:Key="TextBoxWithErrors">
             <Setter Property="Validation.ErrorTemplate">
                 <Setter.Value>
@@ -48,7 +54,7 @@
             <DockPanel LastChildFill="True">
                 <ListBox DockPanel.Dock="Left" Name="VodkaListPanel" ItemsSource="{Binding Vodkas}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedVodka}" />
 
-                <StackPanel DockPanel.Dock="Bottom" Margin="10">
+                <StackPanel DockPanel.Dock="Top" Margin="10">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -59,9 +65,9 @@
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Row="0" Grid.Column="0">Search term:</Label>
                         <TextBox Grid.Row="1" Grid.Column="0" MinWidth="100" Text="{Binding FilterValue.SearchTerm}" Margin="0, 0, 5, 10"/>
@@ -88,7 +94,6 @@
                         <TextBox Grid.Row="3" Grid.Column="1" MinWidth="100" Text="{Binding FilterValue.Alcohol}" Margin="0, 0, 5, 10"/>
 
                         <Label Grid.Row="2" Grid.Column="2">Type:</Label>
-                        <!--<ComboBox Grid.Row="3" Grid.Column="2"  ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding FilterType}" />-->
                         <ComboBox Grid.Row="3" Grid.Column="2" x:Name="TypeFilterComboBox"
                                   Style="{StaticResource TextBoxWithErrors}"
                                   SelectedValue="{Binding FilterValue.Type}"
@@ -102,54 +107,67 @@
                         </ComboBox>
                     </Grid>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,50">
                         <Button MinWidth="85" Command="{Binding FilterDataCommand}" Margin="0, 0, 10, 0">Search</Button>
                         <Button MinWidth="85" Command="{Binding ClearFiltersCommand}" Margin="0, 0, 0, 0">Clear filters</Button>
                     </StackPanel>
                 </StackPanel>
 
-
-                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
                     <Button Command="{Binding SaveVodkaCommand}" Margin="10, 0, 10, 10">Save Vodka</Button>
                     <Button Command="{Binding DeleteVodkaCommand}" Margin="10, 0, 10, 10">Delete Vodka</Button>
                     <Button Click="CreateVodka" Margin="10, 0, 10, 10">Open Vodka Creation Wizard</Button>
                 </StackPanel>
 
-                <Grid Name="VodkaDetailsList" DataContext="{Binding UpdatedVodka}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UpdatedVodka}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                
+                    <Grid Name="VodkaDetailsList" DockPanel.Dock="Bottom" DataContext="{Binding UpdatedVodka}">
+                        
+
                         <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0">Name:</Label>
-                        <Label Grid.Row="1">Producer:</Label>
-                        <Label Grid.Row="2">Type:</Label>
-                        <Label Grid.Row="3">Price:</Label>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="1" MinWidth="150" Text="{Binding Name}"/>
-                        <ComboBox x:Name="ProducerComboBox" Style="{StaticResource TextBoxWithErrors}" Grid.Row="1" Grid.Column="1" DisplayMemberPath="Name" SelectedItem="{Binding Producer}" />
-                        <ComboBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type}" />
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="3" Grid.Column="1" MinWidth="150" Text="{Binding Price}"/>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0">Name:</Label>
+                            <Label Grid.Row="1">Producer:</Label>
+                            <Label Grid.Row="2">Type:</Label>
+                            <Label Grid.Row="3">Price:</Label>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="1" MinWidth="150" Text="{Binding Name}"/>
+                            <ComboBox x:Name="ProducerComboBox" Style="{StaticResource TextBoxWithErrors}" Grid.Row="1" Grid.Column="1" DisplayMemberPath="Name" SelectedItem="{Binding Producer}" />
+                            <ComboBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Type}" />
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="3" Grid.Column="1" MinWidth="150" Text="{Binding Price}"/>
 
-                        <Label Grid.Column="2" Grid.Row="0">Flavour Profile:</Label>
-                        <Label Grid.Column="2" Grid.Row="1">Alcohol Percentage:</Label>
-                        <Label Grid.Column="2" Grid.Row="2">Volume in liters:</Label>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="3" MinWidth="150" Text="{Binding FlavourProfile}"/>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="1" Grid.Column="3" MinWidth="150" Text="{Binding AlcoholPercentage}"/>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="2" Grid.Column="3" MinWidth="150" Text="{Binding VolumeInLiters}"/>
+                            <Label Grid.Column="2" Grid.Row="0">Flavour Profile:</Label>
+                            <Label Grid.Column="2" Grid.Row="1">Alcohol Percentage:</Label>
+                            <Label Grid.Column="2" Grid.Row="2">Volume in liters:</Label>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="3" MinWidth="150" Text="{Binding FlavourProfile}"/>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="1" Grid.Column="3" MinWidth="150" Text="{Binding AlcoholPercentage}"/>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="2" Grid.Column="3" MinWidth="150" Text="{Binding VolumeInLiters}"/>
 
+                        </Grid>
                     </Grid>
                 </Grid>
             </DockPanel>
@@ -158,12 +176,12 @@
 
         <TabItem Header="Producers">
             <TabItem.DataContext>
-                <viewModels:ProducerListViewModel/>
+                <viewModels:ProducerListViewModel x:Name="ProducerListViewModel"/>
             </TabItem.DataContext>
             <DockPanel LastChildFill="True">
                 <ListBox DockPanel.Dock="Left" Name="ProducerListPanel" ItemsSource="{Binding Producers}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedProducer}" />
 
-                <StackPanel DockPanel.Dock="Bottom" Margin="10">
+                <StackPanel DockPanel.Dock="Top" Margin="10">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -174,96 +192,91 @@
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0">Search term:</Label>
-                        <TextBox Grid.Row="1" Grid.Column="0" MinWidth="100" Text="{Binding }" Margin="0, 0, 5, 10"/>
+                        <Label Grid.Row="0" Grid.Column="0">Name:</Label>
+                        <TextBox Grid.Row="1" Grid.Column="0" MinWidth="100" Text="{Binding FilterValue.SearchTerm}" Margin="0, 0, 5, 10"/>
 
-                        <Label Grid.Row="0" Grid.Column="1">Price lower bound:</Label>
-                        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="50" Text="{Binding }" Margin="0, 0, 5, 10"/>
+                        <Label Grid.Row="0" Grid.Column="1">Country:</Label>
+                        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="100" Text="{Binding FilterValue.Country}" Margin="0, 0, 5, 10"/>
 
-                        <Label Grid.Row="0" Grid.Column="2">Price upper bound:</Label>
-                        <TextBox Grid.Row="1" Grid.Column="2" MinWidth="50" Text="{Binding }" Margin="0, 0, 5, 10"/>
+                        <Label Grid.Row="0" Grid.Column="2">Min year:</Label>
+                        <TextBox Grid.Row="1" Grid.Column="2" MinWidth="50" Text="{Binding FilterValue.MinYear}" Margin="0, 0, 5, 10"/>
 
-                        <Label Grid.Row="0" Grid.Column="3">Producer:</Label>
-                        <ComboBox Grid.Row="1" Grid.Column="3" x:Name="d"
-                      Style="{StaticResource TextBoxWithErrors}"
-                      ItemsSource="{Binding }"
-                      SelectedValue="{Binding }"
-                      DisplayMemberPath="Name"
-                      SelectedValuePath="Id"
-                      Margin="0, 0, 5, 10" />
+                        <Label Grid.Row="0" Grid.Column="3">Max year:</Label>
+                        <TextBox Grid.Row="1" Grid.Column="3" MinWidth="50" Text="{Binding FilterValue.MaxYear}" Margin="0, 0, 5, 10"/>
 
-                        <Label Grid.Row="2" Grid.Column="0">Volume:</Label>
-                        <TextBox Grid.Row="3" Grid.Column="0" MinWidth="100" Text="{Binding }" Margin="0, 0, 5, 10"/>
-
-                        <Label Grid.Row="2" Grid.Column="1">Alcohol:</Label>
-                        <TextBox Grid.Row="3" Grid.Column="1" MinWidth="100" Text="{Binding }" Margin="0, 0, 5, 10"/>
-
-                        <Label Grid.Row="2" Grid.Column="2">Type:</Label>
-                        <!--<ComboBox Grid.Row="3" Grid.Column="2"  ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding }" />-->
-                        <ComboBox Grid.Row="3" Grid.Column="2" x:Name="a"
-                          Style="{StaticResource TextBoxWithErrors}"
-                          SelectedValue="{Binding }"
-                          Margin="0, 0, 5, 10">
-                            <ComboBox.ItemsSource>
-                                <CompositeCollection>
-                                    <ComboBoxItem Content="All types"/>
-                                    <CollectionContainer Collection="{Binding Source={StaticResource dataFromEnum}}" />
-                                </CompositeCollection>
-                            </ComboBox.ItemsSource>
-                        </ComboBox>
+                        <Label Grid.Row="0" Grid.Column="4">Export status:</Label>
+                        <ComboBox Grid.Row="1" Grid.Column="4" x:Name="FilterExportStatus"
+                            Style="{StaticResource TextBoxWithErrors}"
+                            ItemsSource="{Binding FilterExportStatuses}"
+                            SelectedValue="{Binding FilterValue.ExportStatus}"
+                            Margin="0, 0, 5, 10" />
                     </Grid>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
-                        <Button MinWidth="85" Command="{Binding }" Margin="0, 0, 10, 0">Search</Button>
-                        <Button MinWidth="85" Command="{Binding }" Margin="0, 0, 0, 0">Clear filters</Button>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,50">
+                        <Button MinWidth="85" Command="{Binding FilterDataCommand}" Margin="0, 0, 10, 0">Search</Button>
+                        <Button MinWidth="85" Command="{Binding ClearFiltersCommand}" Margin="0, 0, 0, 0">Clear filters</Button>
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-                    <Button Command="{Binding }" Margin="10, 0, 10, 10">Save Producer</Button>
-                    <Button Command="{Binding }" Margin="10, 0, 10, 10">Delete Producer</Button>
-                    <Button Click="CreateVodka" Margin="10, 0, 10, 10">Open Producer Creation Wizard</Button>
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
+                    <Button Command="{Binding SaveProducerCommand}" Margin="10, 0, 10, 10">Save Producer</Button>
+                    <Button Command="{Binding DeleteProducerCommand}" Margin="10, 0, 10, 10">Delete Producer</Button>
+                    <Button Click="CreateProducer" Margin="10, 0, 10, 10">Open Producer Creation Wizard</Button>
                 </StackPanel>
 
-                <Grid Name="b" DataContext="{Binding }">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UpdatedProducer}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid Name="ProducerDetails" DataContext="{Binding UpdatedProducer}">
                         <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0">Name:</Label>
-                        <Label Grid.Row="1">Producer:</Label>
-                        <Label Grid.Row="2">Type:</Label>
-                        <Label Grid.Row="3">Price:</Label>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="1" MinWidth="150" Text="{Binding }"/>
-                        <ComboBox x:Name="c" Style="{StaticResource TextBoxWithErrors}" Grid.Row="1" Grid.Column="1" DisplayMemberPath="Name" SelectedItem="{Binding }" />
-                        <ComboBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding }" />
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="3" Grid.Column="1" MinWidth="150" Text="{Binding }"/>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0">Name:</Label>
+                            <Label Grid.Row="1">Country of Origin:</Label>
+                            <Label Grid.Row="2">Establishment Year:</Label>
+                            <Label Grid.Row="3">Export status:</Label>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="1" MinWidth="150" Text="{Binding Name}"/>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="1" Grid.Column="1" MinWidth="150" Text="{Binding CountryOfOrigin}"/>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="2" Grid.Column="1" MinWidth="150" Text="{Binding EstablishmentYear}"/>
+                            <ComboBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Source={StaticResource exportStatuses}}" SelectedItem="{Binding ExportStatus}" >
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=., StringFormat={}{0:G}}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Label Grid.Column="2" Grid.Row="0">Description:</Label>
+                            <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="3" Grid.RowSpan="4" MinWidth="300" TextWrapping="Wrap" Text="{Binding Description }"/>
 
-                        <Label Grid.Column="2" Grid.Row="0">Flavour Profile:</Label>
-                        <Label Grid.Column="2" Grid.Row="1">Alcohol Percentage:</Label>
-                        <Label Grid.Column="2" Grid.Row="2">Volume in liters:</Label>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="0" Grid.Column="3" MinWidth="150" Text="{Binding }"/>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="1" Grid.Column="3" MinWidth="150" Text="{Binding }"/>
-                        <TextBox Style="{StaticResource TextBoxWithErrors}" Grid.Row="2" Grid.Column="3" MinWidth="150" Text="{Binding }"/>
-
+                        </Grid>
                     </Grid>
                 </Grid>
             </DockPanel>

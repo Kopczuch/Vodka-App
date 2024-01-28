@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using Konefeld.Kopiec.VodkaApp.UI.ViewModels;
 
 namespace Konefeld.Kopiec.VodkaApp.UI
 {
@@ -23,6 +24,19 @@ namespace Konefeld.Kopiec.VodkaApp.UI
             Tc.SelectionChanged += TabControl_SelectionChanged;
         }
 
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source is not TabControl)
+                return;
+
+            VodkaListViewModel.GetAllVodkas();
+            _producersData.Clear();
+            foreach (var x in VodkaListViewModel.Producers)
+            {
+                _producersData.Add(x.Producer);
+            }
+        }
+
         private void CreateVodka(object sender, RoutedEventArgs e)
         {
             var createVodkaWindow = new CreateVodkaWindow
@@ -34,17 +48,15 @@ namespace Konefeld.Kopiec.VodkaApp.UI
             createVodkaWindow.ShowDialog();
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CreateProducer(object sender, RoutedEventArgs e)
         {
-            if (e.Source is not TabControl)
-                return;
-            
-            VodkaListViewModel.GetAllVodkas();
-            _producersData.Clear();
-            foreach (var x in VodkaListViewModel.Producers)
+            var createProducerWindow = new CreateProducerWindow
             {
-                _producersData.Add(x.Producer);
-            }
+                Owner = this
+            };
+
+            createProducerWindow.Closed += (s, args) => ProducerListViewModel.GetAllProducers();
+            createProducerWindow.ShowDialog();
         }
     }
 }

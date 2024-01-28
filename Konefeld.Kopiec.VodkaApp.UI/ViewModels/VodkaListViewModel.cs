@@ -12,32 +12,12 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
 
         private readonly RelayCommand _filterDataCommand;
         private readonly RelayCommand _clearFiltersCommand;
-        private VodkaType _filterType;
 
         public RelayCommand FilterDataCommand => _filterDataCommand;
         public RelayCommand ClearFiltersCommand => _clearFiltersCommand;
 
         public IVodkaFilter FilterValue { get; set; }
         public IList<ProducerData> FilterProducers { get; set; }
-
-        public VodkaType FilterType
-        {
-            get => _filterType;
-            set
-            {
-                if (_filterType != value)
-                {
-                    _filterType = value;
-
-                    if (FilterValue != null)
-                    {
-                        FilterValue.Type = _filterType.ToString();
-                    }
-
-                    OnPropertyChanged("FilterType");
-                }
-            }
-        }
 
         private readonly Blc.Blc _blc;
         public VodkaListViewModel()

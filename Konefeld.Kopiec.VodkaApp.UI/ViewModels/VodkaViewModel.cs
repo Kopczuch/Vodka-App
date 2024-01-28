@@ -6,7 +6,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
 {
     public class VodkaViewModel : ViewModelBase
     {
-        private readonly IVodka _vodka;
+        public readonly IVodka _vodka;
         public IVodka Vodka => _vodka;
 
         public VodkaViewModel(IVodka vodka)
@@ -88,6 +88,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
             }
         }
 
+        [Required(ErrorMessage = "Type is required")]
         public VodkaType Type
         {
             get => _vodka.Type;
