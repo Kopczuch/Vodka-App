@@ -6,16 +6,13 @@ Programowanie Wizualne - Projekt
 * Adam Kopiec 148198
 
 # Aplikacja okienkowa (WPF)
-Projekt startowy: Konefeld.Kopiec.VodkaApp.UI
-
-Wybór bazy danych: appsettings.json
+* Projekt startowy: Konefeld.Kopiec.VodkaApp.UI
+* Wybór bazy danych: appsettings.json
 
 # Aplikacja responsywna (Blazor)
-Projekt startowy: Konefeld.Kopiec.VodkaApp.UI.WEB
+* Projekt startowy: Konefeld.Kopiec.VodkaApp.UI.WEB
+* Wybór bazy danych: appsettings.json
 
-Wybór bazy danych: appsettings.json
-
-# Projekty DAO z bazą danych
-DaoMock1
-
-DaoSqlite
+# Warstwy DAO
+* DaoMock1
+* DaoSqlite
