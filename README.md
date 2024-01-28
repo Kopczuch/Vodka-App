@@ -14,6 +14,6 @@ Wybór bazy danych: appsettings.json
 Projekt startowy: Konefeld.Kopiec.VodkaApp.UI.WEB
 Wybór bazy danych: appsettings.json
 
-## Projekty DAO z bazą danych
+# Projekty DAO z bazą danych
 DaoMock1
 DaoSqlite
