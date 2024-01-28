@@ -10,30 +10,40 @@ namespace Konefeld.Kopiec.VodkaApp.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        ObservableCollection<IProducer> Help = new ObservableCollection<IProducer>();
+        private readonly ObservableCollection<IProducer> _producersData = new();
         public MainWindow()
         {
             InitializeComponent();
             foreach (var x in VodkaListViewModel.Producers)
             {
-                Help.Add(x.Producer);
+                _producersData.Add(x.Producer);
             }
 
-            ProducerComboBox.ItemsSource = Help;
-            FilterProducerComboBox.ItemsSource = Help;
-            Tc.SelectionChanged += Tabcontrol_SelectionChanged;
+            ProducerComboBox.ItemsSource = _producersData;
+            Tc.SelectionChanged += TabControl_SelectionChanged;
         }
 
-        private void Tabcontrol_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CreateVodka(object sender, RoutedEventArgs e)
         {
-            if (e.Source is TabControl)
+            var createVodkaWindow = new CreateVodkaWindow
             {
-                VodkaListViewModel.GetAllVodkas();
-                Help.Clear();
-                foreach (var x in VodkaListViewModel.Producers)
-                {
-                    Help.Add(x.Producer);
-                }
+                Owner = this
+            };
+
+            createVodkaWindow.Closed += (s, args) => VodkaListViewModel.GetAllVodkas();
+            createVodkaWindow.ShowDialog();
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source is not TabControl)
+                return;
+            
+            VodkaListViewModel.GetAllVodkas();
+            _producersData.Clear();
+            foreach (var x in VodkaListViewModel.Producers)
+            {
+                _producersData.Add(x.Producer);
             }
         }
     }

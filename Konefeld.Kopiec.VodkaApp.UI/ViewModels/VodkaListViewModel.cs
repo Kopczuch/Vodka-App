@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows.Data;
 using Konefeld.Kopiec.VodkaApp.Core;
 using Konefeld.Kopiec.VodkaApp.Interfaces;
 using Konefeld.Kopiec.VodkaApp.UI.Dto;
@@ -11,34 +10,15 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
         public ObservableCollection<VodkaViewModel> Vodkas { get; set; } = new ObservableCollection<VodkaViewModel>();
         public ObservableCollection<ProducerViewModel> Producers { get; set; } = new ObservableCollection<ProducerViewModel>();
 
-        private readonly ListCollectionView _view;
         private readonly RelayCommand _filterDataCommand;
         private readonly RelayCommand _clearFiltersCommand;
-        private IProducer _filterProducer;
         private VodkaType _filterType;
 
         public RelayCommand FilterDataCommand => _filterDataCommand;
         public RelayCommand ClearFiltersCommand => _clearFiltersCommand;
 
         public IVodkaFilter FilterValue { get; set; }
-        public IProducer FilterProducer
-        {
-            get => _filterProducer;
-            set
-            {
-                if (_filterProducer != value)
-                {
-                    _filterProducer = value;
-
-                    if (FilterValue != null)
-                    {
-                        FilterValue.ProducerId = _filterProducer?.Id ?? 0;
-                    }
-
-                    OnPropertyChanged("FilterProducer");
-                }
-            }
-        }
+        public IList<ProducerData> FilterProducers { get; set; }
 
         public VodkaType FilterType
         {
@@ -54,7 +34,7 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
                         FilterValue.Type = _filterType.ToString();
                     }
 
-                    OnPropertyChanged("FilterProducer");
+                    OnPropertyChanged("FilterType");
                 }
             }
         }
@@ -68,11 +48,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
             GetAllProducers();
             OnPropertyChanged("Vodkas");
 
-            _view = (ListCollectionView)CollectionViewSource.GetDefaultView(Vodkas);
-
             _filterDataCommand = new RelayCommand(param => FilterData());
             _clearFiltersCommand = new RelayCommand(param => ClearFilters());
-            _addVodkaCommand = new RelayCommand(param => AddVodka(), param => CanAddVodka());
+            
             _saveVodkaCommand = new RelayCommand(param => SaveVodka(), param => CanSaveVodka());
             _deleteVodkaCommand = new RelayCommand(param => DeleteVodka(), param => CanDeleteVodka());
             
@@ -93,6 +71,17 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
             Producers.Clear();
             var producers = _blc.GetProducers().ToList();
 
+            var producersData = producers.Select(p => new ProducerData
+            {
+                Id = p.Id,
+                Name = p.Name
+            });
+
+            var emptyProducer = new ProducerData { Id = 0, Name = "All producers" };
+
+            FilterProducers = new List<ProducerData>(producersData);
+            FilterProducers.Insert(0, emptyProducer);
+
             foreach (var producer in producers)
             {
                 Producers.Add(new ProducerViewModel(producer));
@@ -101,6 +90,9 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
         
         private void FilterData()
         {
+            // note: hack
+            FilterValue.Type = FilterValue.Type.Equals("System.Windows.Controls.ComboBoxItem: All types") ? string.Empty : FilterValue.Type;
+
             Vodkas.Clear();
             var filteredVodkas = _blc.GetFilteredVodkas(FilterValue).ToList();
 
@@ -113,6 +105,8 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
         private void ClearFilters()
         {
             GetAllVodkas();
+            FilterValue = new VodkaFilter();
+            OnPropertyChanged(nameof(FilterValue));
         }
 
         private VodkaViewModel _updatedVodka;
@@ -157,8 +151,6 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
             );
 
             _blc.UpdateVodka(id, updatedVodka);
-
-            UpdatedVodka = null;
         }
 
         private bool CanSaveVodka()
@@ -166,55 +158,18 @@ namespace Konefeld.Kopiec.VodkaApp.UI.ViewModels
             return UpdatedVodka is { HasErrors: false };
         }
 
-        private readonly RelayCommand _addVodkaCommand;
-        public RelayCommand AddVodkaCommand => _addVodkaCommand;
-
-        private void AddVodka()
-        {
-            //if (Vodkas.Contains(UpdatedVodka))
-            //Vodkas.Add(UpdatedVodka);
-
-            //IGame newGame = dataAccess.AddGame();
-            UpdatedVodka.Validate();
-            
-            var newVodka = new VodkaDto
-            {
-                Name = UpdatedVodka.Vodka.Name,
-                VolumeInLiters = UpdatedVodka.Vodka.VolumeInLiters,
-                AlcoholPercentage = UpdatedVodka.Vodka.AlcoholPercentage,
-                Price = UpdatedVodka.Vodka.Price,
-                ProducerId = UpdatedVodka.Vodka.Producer.Id,
-                Type = UpdatedVodka.Vodka.Type,
-                FlavourProfile = UpdatedVodka.Vodka.FlavourProfile
-            };
-
-            var id = _blc.CreateVodka(newVodka);
-            UpdatedVodka.Vodka.Id = id;
-
-            if (!Vodkas.Contains(UpdatedVodka))
-                Vodkas.Add(UpdatedVodka);
-        }
-
-        private bool CanAddVodka()
-        {
-            return UpdatedVodka == null;
-        }
-
         private readonly RelayCommand _deleteVodkaCommand;
         public RelayCommand DeleteVodkaCommand => _deleteVodkaCommand;
 
         private void DeleteVodka()
         {
+            if (!Vodkas.Contains(SelectedVodka))
+                return;
 
-            //if (Games.Contains(SelectedGame))
-            //{
-            //    dataAccess.DeleteGame(SelectedGame.Game);
-            //    Games.Remove(SelectedGame);
-            //    SelectedGame = null;
-            //    EditedGame = null;
-            //}
-            //SelectedGame = null;
-            //EditedGame = null;
+            _blc.DeleteVodka(SelectedVodka.Vodka.Id);
+            Vodkas.Remove(SelectedVodka);
+            SelectedVodka = null;
+            UpdatedVodka = null;
         }
 
         private bool CanDeleteVodka()
